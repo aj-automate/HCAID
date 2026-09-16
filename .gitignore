@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+env/
+node_modules/
+*.log
+data/german_credit_data.csv
