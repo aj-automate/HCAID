@@ -11,4 +11,4 @@ frontend/dist/
 feedback/
 *.egg-info/
 .pytest_cache/
-inleveren/build/
+inleveren/
