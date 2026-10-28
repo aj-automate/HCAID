@@ -1,0 +1,85 @@
+.home {
+  --ink: #0b1f33;
+  --muted: #4a5a69;
+  --rule: #c5ced6;
+  --surf: #eef2f5;
+  --acc: #00577a;
+  --bad: #ff6b3d;
+  min-height: 100vh;
+  color: var(--ink);
+}
+
+.home-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  background: var(--ink);
+  color: #fff;
+}
+.home-logo { font-weight: 700; font-size: 18px; }
+.home-sub { font-size: 14px; color: #c9d3dc; }
+
+.home-main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 56px 24px 96px;
+}
+.home-eyebrow { color: var(--muted); font-size: 15px; margin-bottom: 8px; }
+.home h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.1; font-weight: 700; letter-spacing: -0.01em; }
+.home-lede { max-width: 680px; font-size: 19px; margin-top: 16px; color: #24384c; }
+
+.home-apps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 48px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.home-app { padding: 28px 28px 32px 0; }
+.home-app + .home-app { padding: 28px 0 32px 28px; border-left: 1px solid var(--rule); }
+.home-tag { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.home-good .home-tag { color: var(--acc); }
+.home-bad .home-tag { color: #c2410c; }
+.home-app h2 { font-size: 28px; margin: 4px 0 10px; }
+.home-bad h2 { font-family: 'Rubik', sans-serif; font-weight: 700; color: var(--bad); }
+.home-app p:not(.home-tag) { color: #24384c; margin-bottom: 20px; }
+
+.home-btn {
+  display: inline-block;
+  padding: 11px 18px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.home-btn:focus-visible { outline: 3px solid #ffbf47; outline-offset: 2px; }
+.home-btn-good { background: var(--acc); color: #fff; border-bottom: 3px solid #003a52; }
+.home-btn-bad {
+  font-family: 'Rubik', sans-serif;
+  background: var(--bad);
+  color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 3px 0 #d44d22;
+}
+
+.home-how { margin-top: 48px; }
+.home-how h2 { font-size: 22px; margin-bottom: 12px; }
+.home-how ol { margin: 0; padding-left: 20px; max-width: 720px; }
+.home-how li { margin-bottom: 8px; }
+.home a:not(.home-btn) { color: var(--acc); text-underline-offset: 3px; }
+
+.home-disclaimer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 720px;
+}
+
+@media (max-width: 720px) {
+  .home-apps { grid-template-columns: 1fr; }
+  .home-app, .home-app + .home-app { padding: 24px 0; border-left: 0; }
+  .home-app + .home-app { border-top: 1px solid var(--rule); }
+  .home-sub { display: none; }
+}

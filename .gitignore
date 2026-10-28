@@ -7,3 +7,8 @@ env/
 node_modules/
 *.log
 data/german_credit_data.csv
+frontend/dist/
+feedback/
+*.egg-info/
+.pytest_cache/
+inleveren/build/

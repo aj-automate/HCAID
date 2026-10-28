@@ -1,0 +1,165 @@
+/* Annotatielaag: bewust neutraal, los van de huisstijl van beide apps. */
+:root {
+  --note-ux: #00577a;
+  --note-ethiek: #6d4c00;
+  --note-dark: #b42318;
+  --note-font: 'Source Sans 3', system-ui, sans-serif;
+}
+
+.note { position: relative; }
+span.note { display: inline-block; }
+
+.note-on {
+  outline: 2px dashed var(--note-color);
+  outline-offset: 4px;
+}
+.note-ux { --note-color: var(--note-ux); }
+.note-ethiek { --note-color: var(--note-ethiek); }
+.note-dark { --note-color: var(--note-dark); }
+
+.note-chip {
+  position: absolute;
+  top: -14px;
+  left: -2px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px 2px 2px;
+  background: var(--note-color);
+  color: #fff;
+  font: 600 12px/18px var(--note-font);
+  white-space: nowrap;
+  max-width: calc(100vw - 48px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: auto;
+  cursor: help;
+}
+.note-chip .notes-num { background: #fff; color: var(--note-color); }
+
+.notes-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font: 700 12px/1 var(--note-font);
+  background: var(--note-color, #333);
+  color: #fff;
+}
+
+.notes-toolbar {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+}
+.notes-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 14px;
+  background: #111;
+  color: #fff;
+  border: 0;
+  font: 600 14px var(--note-font);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.notes-switch:focus-visible { outline: 3px solid #ffbf47; outline-offset: 2px; }
+.notes-switch-track {
+  width: 32px;
+  height: 18px;
+  background: #555;
+  position: relative;
+  transition: background 0.15s;
+}
+.notes-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  transition: transform 0.15s;
+}
+.notes-switch[aria-pressed='true'] .notes-switch-track { background: #2f8f5b; }
+.notes-switch[aria-pressed='true'] .notes-switch-thumb { transform: translateX(14px); }
+
+.notes-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 340px;
+  max-width: 92vw;
+  z-index: 55;
+  background: #fff;
+  color: #1a1a1a;
+  border-left: 1px solid #d0d0d0;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.08);
+  overflow-y: auto;
+  padding: 16px 16px 88px;
+  font: 14px/1.45 var(--note-font);
+}
+.notes-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+.notes-panel-head button {
+  background: none;
+  border: 1px solid #bbb;
+  padding: 4px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+.notes-panel ol { list-style: none; margin: 0; padding: 0; }
+.notes-item { border-top: 1px solid #eee; }
+.notes-item button {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 10px 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.notes-item button:hover .notes-title { text-decoration: underline; }
+.notes-ux { --note-color: var(--note-ux); }
+.notes-ethiek { --note-color: var(--note-ethiek); }
+.notes-dark { --note-color: var(--note-dark); }
+.notes-kind {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--note-color);
+}
+.notes-title { display: block; font-weight: 600; }
+.notes-text { display: block; color: #4a4a4a; margin-top: 2px; }
+.notes-empty { color: #666; }
+.notes-reopen {
+  position: fixed;
+  right: 16px;
+  bottom: 68px;
+  z-index: 60;
+  background: #fff;
+  border: 1px solid #999;
+  padding: 8px 12px;
+  font: 600 13px var(--note-font);
+  cursor: pointer;
+}
+
+@media (min-width: 1100px) {
+  body.notes-shift { padding-right: 340px; }
+}

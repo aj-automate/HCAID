@@ -1,0 +1,16 @@
+.git
+.venv
+**/node_modules
+frontend/dist
+**/__pycache__
+**/.ipynb_checkpoints
+.pytest_cache
+feedback
+notebooks
+poster
+design
+docs
+inleveren
+tests
+data
+*.md

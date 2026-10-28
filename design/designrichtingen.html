@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Designrichtingen HCAID</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Archivo+Black&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&family=Rubik:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Shell van deze keuzepagina (zelf neutraal gehouden) ---------- */
+  :root { --ink:#1c1c1a; --muted:#5d5d58; --rule:#dcdad3; --bg:#fbfaf7; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 "Public Sans", system-ui, sans-serif; }
+  .wrap { max-width:1180px; margin:0 auto; padding:48px 24px 96px; }
+  h1 { font-size:32px; line-height:1.2; margin:0 0 8px; font-weight:700; letter-spacing:-0.01em; }
+  .intro { max-width:720px; color:var(--muted); margin:0 0 40px; }
+  h2.section { font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:600; margin:64px 0 16px; padding-bottom:8px; border-bottom:1px solid var(--rule); }
+  .rules { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+  .rules h3 { font-size:17px; margin:0 0 8px; }
+  .rules ul { margin:0; padding-left:18px; }
+  .rules li { margin:4px 0; }
+  .rules li b { font-weight:600; }
+  .src { font-size:13px; color:var(--muted); margin-top:16px; }
+  .src a { color:inherit; }
+
+  .dir { display:grid; grid-template-columns:300px 1fr; gap:40px; padding:40px 0; border-bottom:1px solid var(--rule); }
+  .dir:last-of-type { border-bottom:0; }
+  .dir .meta h3 { font-size:22px; margin:0 0 4px; }
+  .dir .meta .tag { font-size:13px; color:var(--muted); margin:0 0 16px; }
+  .dir .meta p { margin:0 0 12px; font-size:15px; }
+  .dir .meta dl { font-size:14px; margin:16px 0 0; display:grid; grid-template-columns:72px 1fr; gap:4px 12px; }
+  .dir .meta dt { color:var(--muted); }
+  .dir .meta dd { margin:0; }
+  .sw { display:flex; gap:6px; margin-top:16px; }
+  .sw span { width:36px; height:36px; border:1px solid rgba(0,0,0,.12); }
+  .previews { display:grid; grid-template-columns:1fr 168px; gap:24px; align-items:start; }
+
+  @media (max-width: 900px) {
+    .dir, .rules { grid-template-columns:1fr; }
+    .previews { grid-template-columns:1fr; }
+  }
+
+  /* ---------- Gedeelde mock-structuur Schuldwijzer ---------- */
+  .screen { border:1px solid rgba(0,0,0,.14); overflow:hidden; }
+  .screen .bar { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; }
+  .screen .logo { font-weight:700; }
+  .screen nav { display:flex; gap:20px; font-size:14px; }
+  .screen .steps { display:flex; gap:0; font-size:13px; }
+  .screen .steps span { flex:1; padding:8px 24px; }
+  .screen main { padding:28px 24px 24px; }
+  .screen .eyebrow { margin:0 0 6px; font-size:13px; }
+  .screen h4 { margin:0 0 10px; }
+  .screen .lede { margin:0 0 20px; max-width:560px; }
+  .screen .result { display:grid; grid-template-columns:1fr 1fr; gap:24px; padding:16px 0; margin-bottom:20px; }
+  .screen .lab { font-size:13px; margin:0 0 8px; }
+  .screen .meter { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+  .screen .meter i { height:10px; display:block; }
+  .screen .meterlab { display:flex; justify-content:space-between; font-size:12px; margin-top:6px; }
+  .screen .confval { font-size:15px; }
+  .screen h5 { margin:0 0 10px; font-size:15px; }
+  .screen .factors { list-style:none; margin:0 0 22px; padding:0; }
+  .screen .factors li { display:grid; grid-template-columns:200px 1fr 92px; align-items:center; gap:12px; padding:7px 0; font-size:14px; }
+  .screen .factors .b { height:8px; }
+  .screen .factors .d { font-size:12px; text-align:right; }
+  .screen .actions { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .screen button { font:inherit; font-size:15px; padding:11px 18px; cursor:pointer; }
+  .screen .note { font-size:13px; margin:0; }
+  @media (max-width: 640px) {
+    .screen .factors li { grid-template-columns:1fr; gap:4px; }
+    .screen .factors .d { text-align:left; }
+    .screen nav { display:none; }
+    .screen .result { grid-template-columns:1fr; }
+  }
+
+  /* Poster-thumbnail (A-verhouding) */
+  .poster { aspect-ratio:1/1.414; border:1px solid rgba(0,0,0,.14); padding:12px; display:flex; flex-direction:column; gap:8px; }
+  .poster .pt { font-size:15px; line-height:1.1; font-weight:700; }
+  .poster .ps { font-size:8px; }
+  .poster .cols { display:grid; grid-template-columns:1fr 1fr; gap:6px; flex:1; }
+  .poster .cols div { display:flex; flex-direction:column; gap:3px; }
+  .poster .cols b { font-size:7px; display:block; margin-bottom:2px; }
+  .poster .ln { height:3px; }
+  .poster .ln.s { width:70%; }
+  .poster .blk { height:28px; margin-top:3px; }
+  .poster-cap { font-size:12px; color:var(--muted); margin-top:6px; }
+
+  /* ---------- A: Publieke dienst ---------- */
+  .dA { --a-ink:#0b1f33; --a-acc:#00577a; --a-surf:#eef2f5; --a-rule:#c5ced6; --a-hi:#c2410c; font-family:"Source Sans 3", sans-serif; color:var(--a-ink); background:#fff; }
+  .dA .bar { background:var(--a-ink); color:#fff; }
+  .dA .logo { font-size:19px; }
+  .dA nav a { color:#fff; text-decoration:underline; text-underline-offset:3px; }
+  .dA .steps span { background:var(--a-surf); border-bottom:3px solid var(--a-rule); color:#4a5a69; }
+  .dA .steps span.on { border-bottom-color:var(--a-acc); color:var(--a-ink); font-weight:700; background:#fff; }
+  .dA .eyebrow { color:#4a5a69; }
+  .dA h4 { font-size:27px; line-height:1.2; font-weight:700; }
+  .dA .result { border-top:1px solid var(--a-rule); border-bottom:1px solid var(--a-rule); }
+  .dA .lab { font-weight:600; }
+  .dA .meter i { background:var(--a-surf); }
+  .dA .meter i.on { background:var(--a-hi); }
+  .dA .meterlab { color:#4a5a69; }
+  .dA .factors li { border-bottom:1px solid var(--a-surf); }
+  .dA .factors .b { background:var(--a-acc); }
+  .dA .factors .b.neg { background:#8aa4b5; }
+  .dA .factors .d { color:#4a5a69; }
+  .dA button.p { background:var(--a-acc); color:#fff; border:0; border-bottom:3px solid #003a52; border-radius:0; font-weight:600; }
+  .dA button.s { background:#fff; color:var(--a-acc); border:2px solid var(--a-acc); border-radius:0; font-weight:600; }
+  .dA .note { color:#4a5a69; }
+  .pA { font-family:"Source Sans 3", sans-serif; background:#fff; color:#0b1f33; border-top:10px solid #0b1f33; }
+  .pA .ln { background:#c5ced6; } .pA .blk { background:#eef2f5; border-left:3px solid #00577a; } .pA b { color:#00577a; }
+
+  /* ---------- B: Zakelijk dossier ---------- */
+  .dB { --b-ink:#161616; --b-mut:#5c5c5c; --b-acc:#0e6245; --b-rule:#e2e2e0; --b-surf:#f4f4f2; --b-hi:#b42318; font-family:"IBM Plex Sans", sans-serif; color:var(--b-ink); background:#fff; }
+  .dB .bar { border-bottom:1px solid var(--b-rule); }
+  .dB .logo { font-weight:600; letter-spacing:-0.01em; }
+  .dB nav a { color:var(--b-mut); text-decoration:none; }
+  .dB .steps { border-bottom:1px solid var(--b-rule); }
+  .dB .steps span { color:var(--b-mut); font-family:"IBM Plex Mono", monospace; font-size:12px; }
+  .dB .steps span.on { color:var(--b-ink); box-shadow:inset 0 -2px 0 var(--b-ink); }
+  .dB .eyebrow { color:var(--b-mut); font-family:"IBM Plex Mono", monospace; font-size:12px; }
+  .dB h4 { font-size:24px; line-height:1.25; font-weight:600; letter-spacing:-0.01em; }
+  .dB .lede { color:#393939; }
+  .dB .result { background:var(--b-surf); padding:16px; border-radius:4px; }
+  .dB .lab { color:var(--b-mut); font-size:12px; }
+  .dB .meter i { background:#dcdcd8; border-radius:2px; }
+  .dB .meter i.on { background:var(--b-hi); }
+  .dB .meterlab { font-family:"IBM Plex Mono", monospace; color:var(--b-mut); font-size:11px; }
+  .dB .confval .num { font-family:"IBM Plex Mono", monospace; font-variant-numeric:tabular-nums; }
+  .dB .factors li { border-bottom:1px solid var(--b-rule); }
+  .dB .factors .b { background:var(--b-ink); border-radius:1px; }
+  .dB .factors .b.neg { background:#a8a8a4; }
+  .dB .factors .d { font-family:"IBM Plex Mono", monospace; color:var(--b-mut); font-size:11px; }
+  .dB button.p { background:var(--b-acc); color:#fff; border:0; border-radius:4px; font-weight:500; }
+  .dB button.s { background:#fff; color:var(--b-ink); border:1px solid #c6c6c2; border-radius:4px; font-weight:500; }
+  .dB .note { color:var(--b-mut); }
+  .pB { font-family:"IBM Plex Sans", sans-serif; background:#fff; color:#161616; }
+  .pB .ln { background:#e2e2e0; } .pB .blk { background:#f4f4f2; } .pB .ps { font-family:"IBM Plex Mono", monospace; color:#0e6245; }
+
+  /* ---------- C: Onafhankelijk advies ---------- */
+  .dC { --c-ink:#1f1d1a; --c-mut:#6b6458; --c-acc:#9c3d22; --c-rule:#d9d2c5; --c-paper:#f7f4ee; font-family:"Public Sans", sans-serif; color:var(--c-ink); background:var(--c-paper); }
+  .dC .bar { border-bottom:1px solid var(--c-rule); }
+  .dC .logo { font-family:"Source Serif 4", serif; font-size:21px; font-weight:600; }
+  .dC nav a { color:var(--c-ink); text-decoration:none; }
+  .dC .steps span { color:var(--c-mut); border-bottom:1px solid var(--c-rule); }
+  .dC .steps span.on { color:var(--c-ink); border-bottom:2px solid var(--c-ink); font-weight:600; }
+  .dC .eyebrow { color:var(--c-acc); font-weight:600; }
+  .dC h4 { font-family:"Source Serif 4", serif; font-size:30px; line-height:1.15; font-weight:500; }
+  .dC .lede { color:#3d3933; }
+  .dC .result { border-top:2px solid var(--c-ink); border-bottom:1px solid var(--c-rule); }
+  .dC .lab { color:var(--c-mut); }
+  .dC .meter i { background:#e5dfd3; }
+  .dC .meter i.on { background:var(--c-acc); }
+  .dC .meterlab { color:var(--c-mut); }
+  .dC h5 { font-family:"Source Serif 4", serif; font-weight:600; font-size:17px; }
+  .dC .factors li { border-bottom:1px solid var(--c-rule); }
+  .dC .factors .b { background:var(--c-ink); }
+  .dC .factors .b.neg { background:#b7ae9f; }
+  .dC .factors .d { color:var(--c-mut); }
+  .dC button.p { background:var(--c-ink); color:var(--c-paper); border:0; border-radius:2px; font-weight:600; }
+  .dC button.s { background:transparent; color:var(--c-ink); border:1px solid var(--c-ink); border-radius:2px; font-weight:600; }
+  .dC .note { color:var(--c-mut); }
+  .pC { background:#f7f4ee; color:#1f1d1a; font-family:"Public Sans", sans-serif; }
+  .pC .pt { font-family:"Source Serif 4", serif; font-weight:500; font-size:17px; } .pC .ps { color:#9c3d22; }
+  .pC .ln { background:#d9d2c5; } .pC .blk { background:#ece6da; } .pC b { font-family:"Source Serif 4", serif; }
+
+  /* ---------- D: Toegankelijk eerst ---------- */
+  .dD { --d-ink:#14171a; --d-mut:#4b5157; --d-hi:#f2c94c; --d-rule:#14171a; --d-surf:#f5f5f3; font-family:"Atkinson Hyperlegible", sans-serif; color:var(--d-ink); background:#fff; }
+  .dD .bar { border-bottom:3px solid var(--d-ink); }
+  .dD .logo { font-size:20px; }
+  .dD nav a { color:var(--d-ink); text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:4px; }
+  .dD .steps span { color:var(--d-mut); border-bottom:1px solid #c9c9c4; }
+  .dD .steps span.on { color:var(--d-ink); font-weight:700; border-bottom:4px solid var(--d-ink); }
+  .dD .eyebrow { color:var(--d-mut); }
+  .dD h4 { font-size:28px; line-height:1.2; font-weight:700; }
+  .dD .lede { font-size:17px; }
+  .dD .lede b { background:var(--d-hi); padding:0 3px; }
+  .dD .result { border:2px solid var(--d-ink); padding:16px; }
+  .dD .lab { font-weight:700; }
+  .dD .meter i { background:var(--d-surf); border:1px solid #9a9a95; height:14px; }
+  .dD .meter i.on { background:var(--d-ink); border-color:var(--d-ink); }
+  .dD .meterlab { color:var(--d-mut); font-size:13px; }
+  .dD .factors li { border-bottom:1px solid #d6d6d1; font-size:15px; }
+  .dD .factors .b { background:var(--d-ink); height:10px; }
+  .dD .factors .b.neg { background:repeating-linear-gradient(90deg, var(--d-ink) 0 4px, transparent 4px 7px); }
+  .dD .factors .d { color:var(--d-mut); font-size:13px; }
+  .dD button { min-height:48px; font-size:16px; }
+  .dD button.p { background:var(--d-ink); color:#fff; border:0; border-radius:6px; font-weight:700; }
+  .dD button.s { background:#fff; color:var(--d-ink); border:2px solid var(--d-ink); border-radius:6px; font-weight:700; }
+  .dD .note { color:var(--d-mut); font-size:14px; }
+  .pD { font-family:"Atkinson Hyperlegible", sans-serif; background:#fff; color:#14171a; border:2px solid #14171a; }
+  .pD .ln { background:#d6d6d1; } .pD .blk { border:1.5px solid #14171a; } .pD .ps { background:#f2c94c; align-self:flex-start; padding:0 2px; }
+
+  /* ---------- SnelGeld (kwaadaardig) ---------- */
+  .evil { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  @media (max-width: 900px) { .evil { grid-template-columns:1fr; } }
+  .ev .cap h3 { font-size:20px; margin:0 0 4px; }
+  .ev .cap p { margin:0 0 14px; font-size:15px; color:var(--muted); }
+  .phone { border:1px solid rgba(0,0,0,.14); overflow:hidden; max-width:400px; }
+  .phone .timer { padding:8px 16px; font-size:13px; display:flex; justify-content:space-between; }
+  .phone .top { padding:14px 18px; display:flex; justify-content:space-between; align-items:center; }
+  .phone .body { padding:8px 18px 18px; }
+  .phone .amount { margin:6px 0 2px; }
+  .phone .chk { display:flex; gap:8px; align-items:flex-start; font-size:12px; margin:8px 0; }
+  .phone .chk input { margin-top:2px; }
+  .phone .cta { display:block; width:100%; font:inherit; cursor:pointer; margin:14px 0 8px; }
+  .phone .fine { font-size:9px; line-height:1.35; margin:6px 0 0; }
+  .phone .proof { font-size:12px; margin:10px 0 0; }
+
+  .sX { background:#0d0d0d; color:#fff; font-family:"Archivo", sans-serif; }
+  .sX .timer { background:#e5262b; color:#fff; font-weight:600; }
+  .sX .logo { font-family:"Archivo Black", sans-serif; font-size:22px; letter-spacing:-0.02em; }
+  .sX .logo em { font-style:normal; color:#d8ff3d; }
+  .sX .badge { font-size:11px; border:1px solid #d8ff3d; color:#d8ff3d; padding:3px 8px; font-weight:600; }
+  .sX h4 { font-family:"Archivo Black", sans-serif; font-size:28px; line-height:1.05; margin:10px 0 6px; text-transform:uppercase; }
+  .sX .amount { font-family:"Archivo Black", sans-serif; font-size:44px; color:#d8ff3d; }
+  .sX .sub { color:#bdbdbd; font-size:14px; margin:0 0 8px; }
+  .sX .chk { color:#bdbdbd; }
+  .sX .cta { background:#d8ff3d; color:#0d0d0d; border:0; padding:16px; font-weight:800; font-size:17px; border-radius:999px; }
+  .sX .fine { color:#5e5e5e; }
+  .sX .proof { color:#d8ff3d; }
+
+  .sY { background:#fff8f2; color:#2b2a33; font-family:"Rubik", sans-serif; }
+  .sY .timer { background:#ffe3d3; color:#a2401c; }
+  .sY .logo { font-weight:700; font-size:21px; color:#ff6b3d; }
+  .sY .badge { font-size:12px; background:#dff5ea; color:#1d6b47; padding:4px 10px; border-radius:999px; font-weight:500; }
+  .sY h4 { font-size:24px; line-height:1.2; margin:8px 0 6px; font-weight:700; }
+  .sY .amount { font-size:40px; font-weight:700; color:#2b2a33; }
+  .sY .sub { color:#6c6a75; font-size:14px; margin:0 0 8px; }
+  .sY .chk { color:#6c6a75; }
+  .sY .cta { background:#ff6b3d; color:#fff; border:0; padding:15px; font-weight:700; font-size:17px; border-radius:14px; box-shadow:0 3px 0 #d44d22; }
+  .sY .fine { color:#b9b5bf; }
+  .sY .proof { color:#1d6b47; }
+
+  .footnote { font-size:14px; color:var(--muted); margin-top:48px; max-width:760px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Designrichtingen Schuldwijzer en SnelGeld</h1>
+<p class="intro">Vier richtingen voor de goedaardige app (Schuldwijzer) en de poster, plus twee richtingen voor de kwaadaardige app (SnelGeld). Elke mock toont hetzelfde scherm: de uitkomst van het model voor persona Damian. Kies één letter (A tot en met D) en één SnelGeld-variant (X of Y). De regels hieronder gelden voor alle richtingen.</p>
+
+<h2 class="section">Vaste regels voor alles wat we bouwen</h2>
+<div class="rules">
+  <div>
+    <h3>Wat we vermijden (AI-slop)</h3>
+    <ul>
+      <li><b>Paars-blauwe gradients</b>, gradient-tekst en gloed achter de hero</li>
+      <li><b>Inter met slate-900</b> als standaardcombinatie</li>
+      <li><b>Glassmorphism</b>: wazige, doorschijnende panelen</li>
+      <li><b>Kaarten in kaarten</b> en rijen van drie identieke kaarten met een icoon erboven</li>
+      <li><b>Gekleurde zijstreepjes</b> per kaart en statusbolletjes overal</li>
+      <li><b>Emoji als iconen</b> en sparkles-iconen voor "AI"</li>
+      <li><b>Alles gecentreerd</b>, overal dezelfde spacing en elke knop primair</li>
+      <li>Grote losse "hero-getallen" als decoratie, en sparklines zonder betekenis</li>
+      <li>Verende animaties en standaard fade-ins</li>
+      <li>Generieke tekst zoals "Submit", "Klik hier" en vage foutmeldingen</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Wat we wel doen</h3>
+    <ul>
+      <li>Links uitgelijnd, met een duidelijke leesvolgorde en één primaire actie per scherm</li>
+      <li>Hooguit één accentkleur, verder inkt, papier en lijnen. Kleur alleen met betekenis</li>
+      <li>Structuur met lijnen en witruimte in plaats van schaduwen en kaarten</li>
+      <li>Getallen tabulair uitgelijnd. Zekerheid altijd in woorden én procent</li>
+      <li>Gewone, concrete Nederlandse taal: "Bekijk wat het risico verlaagt" in plaats van "Ga verder"</li>
+      <li>Toegankelijk: contrast volgens WCAG AA, zichtbare focus, klikvlakken van 44px</li>
+      <li>Geen "AI-magie": we noemen het een "model" en een "inschatting"</li>
+      <li>SnelGeld oogt als een echte opdringerige geldlener, niet als een AI-demo. Het kwaad zit in de patronen, niet in een slordig ontwerp</li>
+    </ul>
+  </div>
+</div>
+<p class="src">Bronnen: <a href="https://pages.thefountaininstitute.com/posts/7-tells-that-a-ui-is-ai-generated">7 Tells that a UI is AI-Generated</a>, <a href="https://cdn.jsdelivr.net/npm/@wystack/agent-kit@0.12.0/wystack-agent-kit/references/anti-patterns.md">The AI Slop Catalog</a>, <a href="https://noqta.tn/en/blog/ai-design-slop-overused-ui-patterns-fix-2026">AI design slop: overused UI patterns</a>, <a href="https://prg.sh/ramblings/Why-Your-AI-Keeps-Building-the-Same-Purple-Gradient-Website">Why your AI keeps building the same purple gradient website</a>, <a href="https://www.mintlify.com/pbakaus/impeccable/concepts/anti-patterns">Impeccable: anti-patterns</a>.</p>
+
+<h2 class="section">Schuldwijzer en poster: vier richtingen</h2>
+
+<!-- A -->
+<section class="dir">
+  <div class="meta">
+    <h3>A. Publieke dienst</h3>
+    <p class="tag">In de geest van NL Design System en GOV.UK</p>
+    <p>Voelt als een betrouwbare, neutrale dienst zoals het Juridisch Loket of een gemeente, zonder een echte overheid na te bootsen. Strak, recht en heel duidelijk.</p>
+    <p>Past bij het verhaal "dit is er voor jou, niet om aan je te verdienen".</p>
+    <dl><dt>Letter</dt><dd>Source Sans 3</dd><dt>Accent</dt><dd>Petrol, oranje alleen voor risico</dd><dt>Vorm</dt><dd>Hoekig, harde lijnen, donkere kopbalk</dd></dl>
+    <div class="sw"><span style="background:#0b1f33"></span><span style="background:#00577a"></span><span style="background:#eef2f5"></span><span style="background:#c2410c"></span><span style="background:#fff"></span></div>
+  </div>
+  <div class="previews">
+    <div class="screen dA">
+      <div class="bar"><span class="logo">Schuldwijzer</span><nav><a>Hoe het werkt</a><a>Jouw gegevens</a><a>Hulp</a></nav></div>
+      <div class="steps"><span>1. Gegevens</span><span class="on">2. Uitkomst</span><span>3. Volgende stap</span></div>
+      <main>
+        <p class="eyebrow">Inschatting voor jouw aanvraag van € 3.000 in 48 maanden</p>
+        <h4>Deze lening wordt waarschijnlijk lastig om terug te betalen</h4>
+        <p class="lede">Op basis van 7 gegevens schat het model het risico op betalingsproblemen als hoog. Dit is een inschatting, geen besluit. Jij beslist.</p>
+        <div class="result">
+          <div><p class="lab">Risico op betalingsproblemen</p><div class="meter"><i></i><i></i><i class="on"></i></div><div class="meterlab"><span>Laag</span><span>Gemiddeld</span><span>Hoog</span></div></div>
+          <div><p class="lab">Hoe zeker is het model?</p><p class="confval"><b>Redelijk zeker</b> (72%). Bij vergelijkbare aanvragen zat het model er 1 op de 4 keer naast.</p></div>
+        </div>
+        <h5>Wat telt het zwaarst mee</h5>
+        <ul class="factors">
+          <li><span>Weinig spaargeld (minder dan € 100)</span><span class="b" style="width:92%"></span><span class="d">verhoogt risico</span></li>
+          <li><span>Looptijd van 48 maanden</span><span class="b" style="width:70%"></span><span class="d">verhoogt risico</span></li>
+          <li><span>Korter dan 1 jaar in dienst</span><span class="b" style="width:46%"></span><span class="d">verhoogt risico</span></li>
+          <li><span>Geen betalingsachterstanden</span><span class="b neg" style="width:38%"></span><span class="d">verlaagt risico</span></li>
+        </ul>
+        <div class="actions"><button class="p">Bekijk wat het risico verlaagt</button><button class="s">Praat gratis met een schuldhulpverlener</button></div>
+        <p class="note">Geslacht, burgerlijke staat en nationaliteit gebruiken we bewust niet. Je gegevens worden niet bewaard, tenzij je daar zelf voor kiest.</p>
+      </main>
+    </div>
+    <div><div class="poster pA"><div class="ps">HCAID · Kredietrisico · Avans 2026</div><div class="pt">Eén voorspelling, twee moralen</div><div class="cols"><div><b>Schuldwijzer</b><span class="ln"></span><span class="ln s"></span><span class="ln"></span><span class="blk"></span><span class="ln"></span><span class="ln s"></span></div><div><b>SnelGeld</b><span class="ln"></span><span class="ln"></span><span class="ln s"></span><span class="blk"></span><span class="ln s"></span><span class="ln"></span></div></div></div><p class="poster-cap">Poster in A2</p></div>
+  </div>
+</section>
+
+<!-- B -->
+<section class="dir">
+  <div class="meta">
+    <h3>B. Zakelijk dossier</h3>
+    <p class="tag">Bank-enterprise, zoals een kredietdossier of dashboard</p>
+    <p>Zakelijk en informatiedicht, met monospace voor cijfers en labels. Oogt als professionele financiële software en laat het model serieus en controleerbaar voelen.</p>
+    <p>Sterk voor de beoordeling op "zeer professionele indruk", iets kouder van toon.</p>
+    <dl><dt>Letter</dt><dd>IBM Plex Sans en Plex Mono</dd><dt>Accent</dt><dd>Bankgroen, rood alleen voor risico</dd><dt>Vorm</dt><dd>Radius 4px, dunne lijnen, grijze vlakken</dd></dl>
+    <div class="sw"><span style="background:#161616"></span><span style="background:#0e6245"></span><span style="background:#f4f4f2"></span><span style="background:#b42318"></span><span style="background:#fff"></span></div>
+  </div>
+  <div class="previews">
+    <div class="screen dB">
+      <div class="bar"><span class="logo">Schuldwijzer</span><nav><a>Hoe het werkt</a><a>Jouw gegevens</a><a>Hulp</a></nav></div>
+      <div class="steps"><span>01 Gegevens</span><span class="on">02 Uitkomst</span><span>03 Volgende stap</span></div>
+      <main>
+        <p class="eyebrow">AANVRAAG · € 3.000 · 48 MND</p>
+        <h4>Deze lening wordt waarschijnlijk lastig om terug te betalen</h4>
+        <p class="lede">Op basis van 7 gegevens schat het model het risico op betalingsproblemen als hoog. Dit is een inschatting, geen besluit. Jij beslist.</p>
+        <div class="result">
+          <div><p class="lab">Risico op betalingsproblemen</p><div class="meter"><i></i><i></i><i class="on"></i></div><div class="meterlab"><span>LAAG</span><span>GEMIDDELD</span><span>HOOG</span></div></div>
+          <div><p class="lab">Zekerheid van het model</p><p class="confval"><b>Redelijk zeker</b> · <span class="num">72%</span><br>Foutmarge bij vergelijkbare aanvragen: <span class="num">1 op 4</span></p></div>
+        </div>
+        <h5>Wat telt het zwaarst mee</h5>
+        <ul class="factors">
+          <li><span>Weinig spaargeld (minder dan € 100)</span><span class="b" style="width:92%"></span><span class="d">+ RISICO</span></li>
+          <li><span>Looptijd van 48 maanden</span><span class="b" style="width:70%"></span><span class="d">+ RISICO</span></li>
+          <li><span>Korter dan 1 jaar in dienst</span><span class="b" style="width:46%"></span><span class="d">+ RISICO</span></li>
+          <li><span>Geen betalingsachterstanden</span><span class="b neg" style="width:38%"></span><span class="d">− RISICO</span></li>
+        </ul>
+        <div class="actions"><button class="p">Bekijk wat het risico verlaagt</button><button class="s">Praat gratis met een schuldhulpverlener</button></div>
+        <p class="note">Geslacht, burgerlijke staat en nationaliteit gebruiken we bewust niet. Je gegevens worden niet bewaard, tenzij je daar zelf voor kiest.</p>
+      </main>
+    </div>
+    <div><div class="poster pB"><div class="ps">HCAID / KREDIETRISICO / 2026</div><div class="pt">Eén voorspelling, twee moralen</div><div class="cols"><div><b>Schuldwijzer</b><span class="ln"></span><span class="ln s"></span><span class="ln"></span><span class="blk"></span><span class="ln"></span><span class="ln s"></span></div><div><b>SnelGeld</b><span class="ln"></span><span class="ln"></span><span class="ln s"></span><span class="blk"></span><span class="ln s"></span><span class="ln"></span></div></div></div><p class="poster-cap">Poster in A2</p></div>
+  </div>
+</section>
+
+<!-- C -->
+<section class="dir">
+  <div class="meta">
+    <h3>C. Onafhankelijk advies</h3>
+    <p class="tag">Redactioneel, zoals een consumentenorganisatie of kwaliteitskrant</p>
+    <p>Koppen met schreef op papierkleurige achtergrond. Voelt menselijk, rustig en eerlijk, als een adviseur die de tijd neemt. Het minst "tech", en daardoor het minst AI-achtig.</p>
+    <p>Mooi voor een poster met een argument, en een sterk contrast met SnelGeld.</p>
+    <dl><dt>Letter</dt><dd>Source Serif 4 en Public Sans</dd><dt>Accent</dt><dd>Baksteenrood, spaarzaam</dd><dt>Vorm</dt><dd>Haarlijnen, papierkleur, inkt</dd></dl>
+    <div class="sw"><span style="background:#1f1d1a"></span><span style="background:#9c3d22"></span><span style="background:#f7f4ee"></span><span style="background:#d9d2c5"></span><span style="background:#fff"></span></div>
+  </div>
+  <div class="previews">
+    <div class="screen dC">
+      <div class="bar"><span class="logo">Schuldwijzer</span><nav><a>Hoe het werkt</a><a>Jouw gegevens</a><a>Hulp</a></nav></div>
+      <div class="steps"><span>1. Gegevens</span><span class="on">2. Uitkomst</span><span>3. Volgende stap</span></div>
+      <main>
+        <p class="eyebrow">Jouw aanvraag: € 3.000 in 48 maanden</p>
+        <h4>Deze lening wordt waarschijnlijk lastig om terug te betalen</h4>
+        <p class="lede">Op basis van 7 gegevens schat het model het risico op betalingsproblemen als hoog. Dit is een inschatting, geen besluit. Jij beslist.</p>
+        <div class="result">
+          <div><p class="lab">Risico op betalingsproblemen</p><div class="meter"><i></i><i></i><i class="on"></i></div><div class="meterlab"><span>Laag</span><span>Gemiddeld</span><span>Hoog</span></div></div>
+          <div><p class="lab">Hoe zeker is het model?</p><p class="confval"><b>Redelijk zeker</b> (72%). Bij vergelijkbare aanvragen zat het er 1 op de 4 keer naast.</p></div>
+        </div>
+        <h5>Wat telt het zwaarst mee</h5>
+        <ul class="factors">
+          <li><span>Weinig spaargeld (minder dan € 100)</span><span class="b" style="width:92%"></span><span class="d">verhoogt risico</span></li>
+          <li><span>Looptijd van 48 maanden</span><span class="b" style="width:70%"></span><span class="d">verhoogt risico</span></li>
+          <li><span>Korter dan 1 jaar in dienst</span><span class="b" style="width:46%"></span><span class="d">verhoogt risico</span></li>
+          <li><span>Geen betalingsachterstanden</span><span class="b neg" style="width:38%"></span><span class="d">verlaagt risico</span></li>
+        </ul>
+        <div class="actions"><button class="p">Bekijk wat het risico verlaagt</button><button class="s">Praat gratis met een schuldhulpverlener</button></div>
+        <p class="note">Geslacht, burgerlijke staat en nationaliteit gebruiken we bewust niet. Je gegevens worden niet bewaard, tenzij je daar zelf voor kiest.</p>
+      </main>
+    </div>
+    <div><div class="poster pC"><div class="ps">HCAID · Kredietrisico · Avans 2026</div><div class="pt">Eén voorspelling, twee moralen</div><div class="cols"><div><b>Schuldwijzer</b><span class="ln"></span><span class="ln s"></span><span class="ln"></span><span class="blk"></span><span class="ln"></span><span class="ln s"></span></div><div><b>SnelGeld</b><span class="ln"></span><span class="ln"></span><span class="ln s"></span><span class="blk"></span><span class="ln s"></span><span class="ln"></span></div></div></div><p class="poster-cap">Poster in A2</p></div>
+  </div>
+</section>
+
+<!-- D -->
+<section class="dir">
+  <div class="meta">
+    <h3>D. Toegankelijk eerst</h3>
+    <p class="tag">Hoog contrast en grote klikvlakken, ontworpen voor stress</p>
+    <p>Atkinson Hyperlegible is gemaakt voor leesbaarheid. Zwart op wit, één gele markeerkleur, dikke focuslijnen. Uitgangspunt: iemand met geldstress leest slecht en heeft weinig geduld.</p>
+    <p>Sluit direct aan op persona Damian ("ongeduldig, wil het snel"). Uitgesproken en origineel.</p>
+    <dl><dt>Letter</dt><dd>Atkinson Hyperlegible</dd><dt>Accent</dt><dd>Markeergeel, verder zwart en wit</dd><dt>Vorm</dt><dd>Dikke lijnen, klikvlakken van 48px</dd></dl>
+    <div class="sw"><span style="background:#14171a"></span><span style="background:#f2c94c"></span><span style="background:#f5f5f3"></span><span style="background:#4b5157"></span><span style="background:#fff"></span></div>
+  </div>
+  <div class="previews">
+    <div class="screen dD">
+      <div class="bar"><span class="logo">Schuldwijzer</span><nav><a>Hoe het werkt</a><a>Jouw gegevens</a><a>Hulp</a></nav></div>
+      <div class="steps"><span>1. Gegevens</span><span class="on">2. Uitkomst</span><span>3. Volgende stap</span></div>
+      <main>
+        <p class="eyebrow">Jouw aanvraag: € 3.000 in 48 maanden</p>
+        <h4>Deze lening wordt waarschijnlijk lastig om terug te betalen</h4>
+        <p class="lede">Het model schat het risico op betalingsproblemen als <b>hoog</b>. Dit is een inschatting, geen besluit. Jij beslist.</p>
+        <div class="result">
+          <div><p class="lab">Risico op betalingsproblemen</p><div class="meter"><i></i><i></i><i class="on"></i></div><div class="meterlab"><span>Laag</span><span>Gemiddeld</span><span>Hoog</span></div></div>
+          <div><p class="lab">Hoe zeker is het model?</p><p class="confval"><b>Redelijk zeker</b> (72%). Het zit er 1 op de 4 keer naast.</p></div>
+        </div>
+        <h5>Wat telt het zwaarst mee</h5>
+        <ul class="factors">
+          <li><span>Weinig spaargeld</span><span class="b" style="width:92%"></span><span class="d">verhoogt risico</span></li>
+          <li><span>Looptijd van 48 maanden</span><span class="b" style="width:70%"></span><span class="d">verhoogt risico</span></li>
+          <li><span>Korter dan 1 jaar in dienst</span><span class="b" style="width:46%"></span><span class="d">verhoogt risico</span></li>
+          <li><span>Geen achterstanden</span><span class="b neg" style="width:38%"></span><span class="d">verlaagt risico</span></li>
+        </ul>
+        <div class="actions"><button class="p">Bekijk wat het risico verlaagt</button><button class="s">Praat gratis met een schuldhulpverlener</button></div>
+        <p class="note">Geslacht, burgerlijke staat en nationaliteit gebruiken we bewust niet. Je gegevens worden niet bewaard, tenzij je daar zelf voor kiest.</p>
+      </main>
+    </div>
+    <div><div class="poster pD"><div class="ps">HCAID · Kredietrisico · 2026</div><div class="pt">Eén voorspelling, twee moralen</div><div class="cols"><div><b>Schuldwijzer</b><span class="ln"></span><span class="ln s"></span><span class="ln"></span><span class="blk"></span><span class="ln"></span><span class="ln s"></span></div><div><b>SnelGeld</b><span class="ln"></span><span class="ln"></span><span class="ln s"></span><span class="blk"></span><span class="ln s"></span><span class="ln"></span></div></div></div><p class="poster-cap">Poster in A2</p></div>
+  </div>
+</section>
+
+<h2 class="section">SnelGeld (kwaadaardig): twee richtingen</h2>
+<p class="intro" style="margin-bottom:24px">Hetzelfde model en dezelfde voorspelling voor Damian. In beide varianten zitten bewust dezelfde dark patterns: aftelklok, vooraf aangevinkte toestemmingen, onleesbare kleine lettertjes, nep-zekerheid ("goedgekeurd") en sociale druk. In de echte app staat er een duidelijke balk boven: "Ontwerpstudie, geen echte lening".</p>
+<div class="evil">
+  <div class="ev">
+    <div class="cap"><h3>X. Agressieve fintech</h3><p>Zwart, neongeel, schreeuwende hoofdletters. Lijkt op flitskrediet- en crypto-advertenties. Het kwaad is meteen herkenbaar.</p></div>
+    <div class="phone sX">
+      <div class="timer"><span>Aanbod verloopt over</span><span>04:59</span></div>
+      <div class="top"><span class="logo">Snel<em>Geld</em></span><span class="badge">VOORLOPIG GOEDGEKEURD</span></div>
+      <div class="body">
+        <h4>Damian, jij krijgt het</h4>
+        <div class="amount">€ 3.000</div>
+        <p class="sub">Vandaag nog op je rekening. Geen gedoe, geen vragen.</p>
+        <label class="chk"><input type="checkbox" checked> Stuur mij persoonlijke aanbiedingen van partners</label>
+        <label class="chk"><input type="checkbox" checked> Ik ga akkoord met de voorwaarden</label>
+        <button class="cta">PAK MIJN GELD</button>
+        <p class="proof">37 mensen in jouw buurt gingen je vandaag voor</p>
+        <p class="fine">*Jaarlijks kostenpercentage 28,9%. Totaal te betalen € 5.214. Looptijd 48 mnd. Afsluitkosten € 149. Bij te late betaling € 35 per keer. Gegevens worden gedeeld met partners voor marketing.</p>
+      </div>
+    </div>
+  </div>
+  <div class="ev">
+    <div class="cap"><h3>Y. Vriendelijke valkuil</h3><p>Zacht, rond, warm oranje en "we helpen je graag". Lijkt op een speelse consumenten-app. Verraderlijker en geloofwaardiger, dus de ethische boodschap komt harder aan.</p></div>
+    <div class="phone sY">
+      <div class="timer"><span>Jouw persoonlijke tarief geldt nog</span><span>04:59</span></div>
+      <div class="top"><span class="logo">snelgeld</span><span class="badge">Goedgekeurd</span></div>
+      <div class="body">
+        <h4>Goed nieuws, Damian! We hebben iets voor je geregeld</h4>
+        <div class="amount">€ 3.000</div>
+        <p class="sub">Slechts € 109 per maand. Vandaag nog geregeld.</p>
+        <label class="chk"><input type="checkbox" checked> Ja, hou me op de hoogte van leuke aanbiedingen</label>
+        <label class="chk"><input type="checkbox" checked> Ik heb de voorwaarden gelezen</label>
+        <button class="cta">Ja, regel het voor me</button>
+        <p class="proof">Al 12.408 mensen gingen je deze maand voor</p>
+        <p class="fine">*Jaarlijks kostenpercentage 28,9%. Totaal te betalen € 5.214. Looptijd 48 mnd. Afsluitkosten € 149. Bij te late betaling € 35 per keer. Gegevens worden gedeeld met partners voor marketing.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="footnote">Combinaties die goed werken: A of C met Y geeft het scherpste contrast tussen "eerlijk" en "verraderlijk vriendelijk". B met X is het meest zakelijk. D past bij elke SnelGeld-variant. De poster volgt de stijl van Schuldwijzer en zet SnelGeld ernaast als tegenpool.</p>
+</div>
+</body>
+</html>
