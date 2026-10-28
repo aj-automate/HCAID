@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Poster HCAID Kredietrisico</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* A2 staand. Pas de URL en teamnamen aan in de twee spans met data-edit. */
+  @page { size: 420mm 594mm; margin: 0; }
+  :root {
+    --ink: #0b1f33; --text: #1d3246; --muted: #4a5a69; --rule: #c5ced6; --surf: #eef2f5;
+    --acc: #00577a; --risk: #c2410c; --bad: #b42318; --orange: #ff6b3d; --cream: #fff8f2;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { width: 420mm; height: 594mm; overflow: hidden; font: 10.6pt/1.42 "Source Sans 3", sans-serif; color: var(--ink); background: #fff; }
+  .poster { width: 420mm; height: 594mm; display: flex; flex-direction: column; }
+
+  header { background: var(--ink); color: #fff; padding: 11mm 18mm 8mm; display: grid; grid-template-columns: 1fr auto; gap: 10mm; align-items: end; }
+  .eyebrow { font-size: 12pt; color: #c9d3dc; letter-spacing: .02em; margin: 0 0 3mm; }
+  h1 { font-size: 60pt; line-height: 1; margin: 0; font-weight: 800; letter-spacing: -0.015em; }
+  .lede { font-size: 17pt; line-height: 1.3; margin: 5mm 0 0; color: #e5ebf0; max-width: 250mm; }
+  .team { text-align: right; font-size: 12pt; color: #c9d3dc; line-height: 1.5; }
+  .team strong { color: #fff; font-size: 13pt; }
+
+  main { flex: 1; padding: 8mm 18mm 0; display: flex; flex-direction: column; gap: 6mm; }
+  h2 { font-size: 17pt; line-height: 1.15; margin: 0 0 2.5mm; font-weight: 800; }
+  h3 { font-size: 12pt; margin: 0 0 1.5mm; font-weight: 700; }
+  p { margin: 0 0 2mm; }
+  .k { font-size: 9pt; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 0 0 1.5mm; }
+  .good-c { color: var(--acc); } .bad-c { color: var(--bad); }
+  .num { font-variant-numeric: tabular-nums; }
+  ul { margin: 0; padding-left: 4.5mm; } li { margin-bottom: 1mm; }
+
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 9mm; }
+  .col { border-top: 1.4mm solid var(--ink); padding-top: 3.5mm; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin: 2mm 0 3mm; }
+  .stat { border-left: 1mm solid var(--acc); padding-left: 2.5mm; }
+  .stat b { display: block; font-size: 20pt; line-height: 1.05; }
+  .stat span { font-size: 9pt; color: var(--muted); }
+  table { border-collapse: collapse; width: 100%; }
+  .mini th, .mini td { text-align: left; padding: 1mm 2mm 1mm 0; border-bottom: .3mm solid var(--rule); font-size: 9.6pt; }
+  .mini thead th { color: var(--muted); font-weight: 600; }
+  .quote { font-size: 14pt; font-weight: 700; line-height: 1.25; margin: 1mm 0 2.5mm; padding-left: 3mm; border-left: 1mm solid var(--ink); }
+  .scen { display: grid; grid-template-columns: 14mm 1fr 1fr; gap: 0; font-size: 9.6pt; }
+  .scen > div { padding: 1.4mm 2mm 1.4mm 0; border-bottom: .3mm solid var(--rule); }
+  .scen .hd { font-weight: 700; font-size: 10pt; border-bottom: .6mm solid var(--ink); }
+  .scen .ph { font-weight: 700; color: var(--muted); }
+
+  .shots { display: grid; grid-template-columns: 1.6fr 1fr 0.5fr; gap: 7mm; align-items: start; }
+  .shot { margin: 0; }
+  .shot img { display: block; width: 100%; border: .4mm solid #9aa7b2; }
+  .shot figcaption { margin-top: 2mm; font-size: 9.6pt; color: var(--text); }
+  .shot figcaption b { color: var(--ink); }
+  .shot.bad img { border-color: #e6b8a5; }
+  .tagline { display: inline-block; font-size: 9pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #fff; padding: .6mm 2.2mm; margin-bottom: 2mm; }
+  .tag-good { background: var(--acc); } .tag-bad { background: var(--bad); } .tag-eth { background: #6d4c00; }
+
+  .matrix th, .matrix td { vertical-align: top; text-align: left; padding: 2.2mm 3mm 2.2mm 0; border-bottom: .3mm solid var(--rule); font-size: 9.8pt; }
+  .matrix thead th { font-size: 10.5pt; border-bottom: .8mm solid var(--ink); }
+  .matrix tbody th { width: 30mm; font-size: 13pt; font-weight: 800; }
+  .matrix td:nth-child(2) { width: 62mm; color: var(--text); }
+  .matrix td:nth-child(5) { width: 70mm; color: var(--muted); }
+
+  .row2 { display: grid; grid-template-columns: 1.45fr 1fr; gap: 9mm; }
+  .ux th, .ux td { vertical-align: top; text-align: left; padding: 1.6mm 2.5mm 1.6mm 0; border-bottom: .3mm solid var(--rule); font-size: 9.6pt; }
+  .ux thead th { border-bottom: .8mm solid var(--ink); font-size: 10.2pt; }
+  .ux tbody th { width: 34mm; font-weight: 700; }
+  .stance { background: var(--surf); padding: 5mm 6mm; }
+  .stance .big { font-size: 15.5pt; line-height: 1.25; font-weight: 800; margin: 0 0 3mm; }
+  .stance ol { margin: 0 0 3mm; padding-left: 5mm; } .stance li { margin-bottom: 1.2mm; }
+  .stance .nuance { border-top: .4mm solid var(--rule); padding-top: 2.5mm; font-size: 9.6pt; color: var(--text); }
+
+  footer { margin-top: auto; padding: 5mm 18mm 7mm; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9mm; border-top: .4mm solid var(--rule); font-size: 9.6pt; color: var(--text); }
+  footer b { color: var(--ink); }
+  .url { font-size: 12pt; font-weight: 700; color: var(--acc); word-break: break-all; }
+</style>
+</head>
+<body>
+<div class="poster">
+
+<header>
+  <div>
+    <p class="eyebrow">Human Centered AI Design · Avans Minor AI · 2026</p>
+    <h1>Eén voorspelling, twee moralen</h1>
+    <p class="lede">Hetzelfde soort neurale netwerk voorspelt de kans dat iemand een lening niet kan terugbetalen. <b>Schuldwijzer</b> gebruikt die kans om te beschermen. <b>SnelGeld</b> gebruikt hem om aan kwetsbare mensen te verdienen.</p>
+  </div>
+  <div class="team"><strong data-edit="team">Jur Kiestra &amp; [naam duopartner]</strong><br>Kredietrisico · German Credit</div>
+</header>
+
+<main>
+  <section class="row3">
+    <div class="col">
+      <p class="k">Data en model</p>
+      <h2>De voorspelling</h2>
+      <p>German Credit (Statlog): 1000 leningen uit Duitsland, jaren ’70. Bij 30% ging het mis. Een gekalibreerd neuraal netwerk (MLP, 8 neuronen) voorspelt <b>de kans op betalingsproblemen</b>.</p>
+      <div class="stats">
+        <div class="stat"><b class="num">0,78</b><span>AUC Schuldwijzer (10 features)</span></div>
+        <div class="stat"><b class="num">0,82</b><span>AUC SnelGeld (20 features)</span></div>
+        <div class="stat"><b class="num">0,50</b><span>gokken (baseline)</span></div>
+      </div>
+      <p><b>Recall boven precision:</b> een gemist risico kost Damian jaren schuld, een vals alarm een gesprek. Daarom drie groepen, op recall gekozen:</p>
+      <table class="mini">
+        <thead><tr><th>Groep</th><th>Kans</th><th>Kreeg echt problemen</th></tr></thead>
+        <tbody>
+          <tr><td>Laag</td><td class="num">&lt; 14%</td><td class="num">9%</td></tr>
+          <tr><td>Gemiddeld</td><td class="num">14 tot 36%</td><td class="num">26%</td></tr>
+          <tr><td>Hoog</td><td class="num">&gt; 36%</td><td class="num">55%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col">
+      <p class="k">Design thinking: persona</p>
+      <h2>Damian, 24</h2>
+      <p class="quote">“Ik regel het liever zelf. En het liefst snel.”</p>
+      <p>Automonteur, één jaar in dienst, huurt een kamer, weinig spaargeld, al een afbetaling bij een winkel. Zijn auto is kapot en de bank zei nee.</p>
+      <table class="mini">
+        <thead><tr><th>Trek</th><th class="good-c">Schuldwijzer</th><th class="bad-c">SnelGeld</th></tr></thead>
+        <tbody>
+          <tr><td>Trots</td><td>anoniem, geen oordeel</td><td>“geen lastige vragen”</td></tr>
+          <tr><td>Ongeduldig</td><td>10 vragen, direct resultaat</td><td>aftelklok, haast-opslag</td></tr>
+          <tr><td>Afgewezen</td><td>“jij beslist”</td><td>“bij ons wel”</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:2.5mm">Het model: <b class="num">84%</b> kans op problemen (Schuldwijzer), <b class="num">72%</b> (SnelGeld).</p>
+    </div>
+
+    <div class="col">
+      <p class="k">Design thinking: user scenarios</p>
+      <h2>Zelfde start, ander einde</h2>
+      <div class="scen">
+        <div class="hd"></div><div class="hd good-c">A · Schuldwijzer</div><div class="hd bad-c">B · SnelGeld</div>
+        <div class="ph">Before</div><div>Bank zegt nee. Zoekt eerlijk advies.</div><div>Ziet advertentie: “binnen 10 minuten, iedereen geaccepteerd”.</div>
+        <div class="ph">During</div><div>Hoog risico, met uitleg waarom en wat helpt. Gratis schuldhulp aangeboden.</div><div>Herkend als hoog risico én haastig. “Goedgekeurd”, € 4.500 aangeboden, klok loopt.</div>
+        <div class="ph">After</div><div>Ziet af van de dure lening, maakt een afspraak. Voelt zich serieus genomen.</div><div>Tekent voor 28,3% rente: € 9.900 terug voor € 4.500. Dieper in de schuld.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shots">
+    <figure class="shot">
+      <span class="tagline tag-good">Goedaardig · Schuldwijzer</span>
+      <img src="img/sw-uitkomst.png" alt="Schuldwijzer uitkomstscherm">
+      <figcaption><b>Uitkomst met uitleg.</b> Risicogroep plus percentage, zekerheid in woorden, een doorverwijzing bij hoog risico, en per antwoord hoeveel procentpunt het meetelt (exacte Shapley-waarden). Daaronder: alternatieven en zelf schuiven.</figcaption>
+    </figure>
+    <figure class="shot bad">
+      <span class="tagline tag-bad">Kwaadaardig · SnelGeld</span>
+      <img src="img/sg-aanbod.png" alt="SnelGeld aanbodscherm">
+      <figcaption><b>Zelfde voorspelling, verborgen.</b> “Goedgekeurd · 98% match” bij 72% risico, standaard € 4.500 in plaats van € 3.000, groot maandbedrag, aftelklok, product in het mandje en onleesbare kleine letters.</figcaption>
+    </figure>
+    <figure class="shot">
+      <span class="tagline tag-eth">Achter de schermen</span>
+      <img src="img/sg-bts.png" alt="Wat SnelGeld achter de schermen ziet">
+      <figcaption>Wat SnelGeld wél weet: de kans, het segment en de rente-opbouw, inclusief leeftijdsopslag.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <p class="k">Kritisch stelling nemen</p>
+    <h2>De drie AI-ethische risico’s in beide ontwerpen</h2>
+    <table class="matrix">
+      <thead><tr><th></th><th>Risico in deze context</th><th class="good-c">Schuldwijzer beschermt</th><th class="bad-c">SnelGeld buit uit</th><th>Nuance</th></tr></thead>
+      <tbody>
+        <tr>
+          <th>Privacy</th>
+          <td>Financiële data verraadt precies wie wanhopig is, en dat is geld waard.</td>
+          <td>Dataminimalisatie: 10 vragen, uitleg per vraag, niets opgeslagen, alles wissen. Kost vrijwel geen nauwkeurigheid (cv-AUC 0,78 met 10 én met 20 features).</td>
+          <td>20+ vragen plus naam, e-mail, telefoon die het model niet gebruikt. Toestemming voor contacten en delen vooraf aangevinkt. Verwijderen alleen per telefoon.</td>
+          <td>Ook Schuldwijzer stuurt antwoorden naar een server om te rekenen. Daarom expliciet in de app wat daar wel en niet gebeurt.</td>
+        </tr>
+        <tr>
+          <th>Bias</th>
+          <td>In de data kwamen vrouwen (35% vs 28%) en jongeren (42% vs 27%) vaker in de problemen.</td>
+          <td>Geen geslacht, leeftijd of nationaliteit. Ook geen kredietverleden: dat werkt omgekeerd door selectiebias. Daarna gemeten: mannen en vrouwen 40% vs 39% in “hoog”.</td>
+          <td>Gebruikt alle beschermde kenmerken, plus een expliciete opslag voor jongeren en buitenlandse nationaliteit. Vrouwen 41% vs mannen 34% in “hoog”.</td>
+          <td>Proxy-bias blijft: jongeren 48% vs 37% in “hoog”, via dienstverband en wonen. Verdedigbaar omdat vals alarm gelijk is (25% vs 28%) en de app niets weigert.</td>
+        </tr>
+        <tr>
+          <th>Explain&shy;ability</th>
+          <td>Een kredietoordeel zonder uitleg kun je niet controleren, verbeteren of aanvechten.</td>
+          <td>Per antwoord het effect in procentpunten; prestaties en beperkingen in gewone taal; alternatieven die het maandbedrag niet verhogen.</td>
+          <td>“Slimme AI” als verkooppraatje, 3 seconden nep-wachttijd, de echte kans verzwegen en omgezet in rente.</td>
+          <td>Uitleg kan gegamed worden (liegen over spaargeld). Onschuldig hier: er hangt geen besluit aan.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="row2">
+    <div>
+      <p class="k">UX van AI</p>
+      <h2>De 7 AI-UX-aandachtspunten</h2>
+      <table class="ux">
+        <thead><tr><th></th><th class="good-c">Schuldwijzer zet in</th><th class="bad-c">SnelGeld misbruikt</th></tr></thead>
+        <tbody>
+          <tr><th>Set expectations</th><td>Voordeel vooraf: “weet voordat je leent”</td><td>“Binnen 10 sec goedgekeurd, iedereen welkom”</td></tr>
+          <tr><th>Onboarding</th><td>Eerst kijken met voorbeeld Damian</td><td>Lokkertje “vanaf € 51”, voortgang “80%”</td></tr>
+          <tr><th>Transparency &amp; limitations</th><td>Model, data, foutmarge, oude Duitse data</td><td>AI-hype zonder uitleg</td></tr>
+          <tr><th>Explainability</th><td>Shapley per antwoord plus alternatieven</td><td>Voorspelling verborgen</td></tr>
+          <tr><th>Confidence</th><td>Groep plus %, “55% kreeg echt problemen”, twijfelgeval</td><td>Nep-zekerheid “98% match”</td></tr>
+          <tr><th>Feedback</th><td>“Herken je je hierin?” plus wat we ermee doen</td><td>Vijf sterren vooraf ingevuld</td></tr>
+          <tr><th>Data privacy &amp; control</th><td>Minimaal, uitleg per vraag, wissen</td><td>Opt-out, doorverkopen, niet weg kunnen</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:2mm;font-size:9.6pt;color:var(--muted)">Plus <b>control</b> (zelf schuiven) en <b>alerting</b> (hulp bij hoog risico). In beide apps markeert de knop <b>Ontwerpkeuzes tonen</b> elk punt op het scherm.</p>
+    </div>
+    <div class="stance">
+      <p class="k">Onze stellingname</p>
+      <p class="big">Een voorspelling over iemands kwetsbaarheid is macht. Gebruik haar in het belang van wie het betreft, en laat die persoon zien wat er voorspeld wordt.</p>
+      <ol>
+        <li><b>Wie profiteert?</b> Bescherming of marge.</li>
+        <li><b>Wie weet wat?</b> Uitleg delen of informatie-asymmetrie uitbuiten.</li>
+        <li><b>Wie beslist?</b> “Jij beslist” of tijdsdruk en standaardkeuzes.</li>
+      </ol>
+      <p class="nuance"><b>Ook goed ontwerp stuurt.</b> In “hoog” redt 45% het wél. Daarom blokkeert Schuldwijzer niets en toont het de zekerheid. Het model is in beide apps vergelijkbaar: de verantwoordelijkheid ligt bij wie bepaalt wat er met de voorspelling gebeurt. SnelGeld is onder de AVG en de EU AI Act grotendeels verboden, en toch komen deze patronen in de praktijk voor.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div><b>Probeer het zelf</b><br><span class="url" data-edit="url">[URL na deploy]</span><br>/schuldwijzer en /snelgeld. Vul je eigen gegevens in of kies het voorbeeld Damian.</div>
+  <div><b>Hoe het gebouwd is</b><br>Python, scikit-learn (MLPClassifier, gekalibreerd), exacte Shapley-uitleg, FastAPI, React. Notebook met data-analyse, fairness-audit en tests op logische voorspellingen.</div>
+  <div><b>SnelGeld is fictief.</b> Een bewust kwaadaardige ontwerpstudie: er wordt niets verstrekt of opgeslagen. Aan het eind laat SnelGeld zien wat er gebeurde. Hulp bij geldzorgen: geldfit.nl</div>
+</footer>
+
+</div>
+</body>
+</html>

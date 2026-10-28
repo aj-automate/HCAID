@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../shared/api'
 import { NotesProvider } from '../shared/annotate'
@@ -64,6 +64,19 @@ export default function SnelGeld() {
       setStage('aanvraag')
     }
   }
+
+  // ?demo vult persona Damian in en springt naar het aanbod; ?demo=klaar gaat door tot de ontmaskering.
+  const demo = new URLSearchParams(window.location.search).get('demo')
+  const demoStarted = useRef(false)
+  useEffect(() => {
+    if (demo === null || !meta || demoStarted.current) return
+    demoStarted.current = true
+    setContact({ name: 'Damian', email: 'damian@voorbeeld.nl', phone: '06 12345678' })
+    submit(meta.defaults, 'vandaag')
+  }, [demo, meta])
+  useEffect(() => {
+    if (demo === 'klaar' && stage === 'aanbod') setStage('klaar')
+  }, [demo, stage])
 
   const restart = () => {
     setStage('landing')

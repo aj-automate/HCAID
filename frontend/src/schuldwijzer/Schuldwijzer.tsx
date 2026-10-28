@@ -163,6 +163,19 @@ export default function Schuldwijzer() {
 
 function SwRoutes({ state }: { state: SwState }) {
   const navigate = useNavigate()
+  const location = useLocation()
+  const demoStarted = useRef(false)
+
+  // ?voorbeeld springt direct naar de uitkomst voor persona Damian (handig voor beoordelaars en schermafbeeldingen).
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (!params.has('voorbeeld') || demoStarted.current) return
+    demoStarted.current = true
+    state.submit(state.meta.defaults).then(() =>
+      navigate(`/schuldwijzer/uitkomst${params.has('ontwerp') ? '?ontwerp' : ''}`, { replace: true }),
+    )
+  }, [location.search, navigate, state])
+
   return (
     <Routes>
       <Route

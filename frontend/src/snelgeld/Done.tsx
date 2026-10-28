@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Note } from '../shared/annotate'
 import { decimal, euro, pct } from '../shared/format'
 import type { Meta, Offer as OfferT } from '../shared/types'
-import { monthlyFor, PROTECTION_FEE } from './Offer'
+import { monthlyFor, PROTECTION_FEE } from './money'
 import type { Contact, Extras, SgValues } from './SnelGeld'
 
 const FAIR_APR = 8.0

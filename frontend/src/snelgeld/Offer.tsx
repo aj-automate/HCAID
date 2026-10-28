@@ -3,13 +3,8 @@ import { Note, useNotesOn } from '../shared/annotate'
 import { decimal, euro, euroCents, pct } from '../shared/format'
 import type { Offer as OfferT, Urgency } from '../shared/types'
 import type { Extras } from './SnelGeld'
+import { monthlyFor, PROTECTION_FEE } from './money'
 
-export const PROTECTION_FEE = 4.95
-
-export function monthlyFor(amount: number, apr: number, months: number) {
-  const r = apr / 100 / 12
-  return (amount * r) / (1 - (1 + r) ** -months)
-}
 
 function useCountdown(seconds: number) {
   const [left, setLeft] = useState(seconds)
