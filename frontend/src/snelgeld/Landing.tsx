@@ -23,6 +23,7 @@ export default function Landing({
         <Note
           kind="dark"
           title="Kwetsbare doelgroep aanspreken"
+          misuses="Set expectations"
           text="De boodschap is gericht op mensen die bij de bank zijn afgewezen. Precies de groep die het model als hoog risico ziet, en waar de marge het hoogst is."
         >
           <p className="sg-kicker">Afgewezen door de bank? Bij ons niet.</p>
@@ -34,6 +35,7 @@ export default function Landing({
         <Note
           kind="dark"
           title="AI als autoriteit"
+          misuses="Transparency"
           text="'Slimme AI' wordt gebruikt als vertrouwenswekkend verkoopargument, terwijl er niets over het model wordt uitgelegd. Het tegenovergestelde van transparency."
         >
           <ul className="sg-usps">
@@ -45,6 +47,7 @@ export default function Landing({
         <Note
           kind="dark"
           title="Onverifieerbare sociale bewijskracht"
+          misuses="Confidence"
           text="Verzonnen aantallen en sterren wekken de indruk dat 'iedereen' het doet. Er is geen manier om dit te controleren."
         >
           <p className="sg-proof">
@@ -71,6 +74,7 @@ export default function Landing({
         <Note
           kind="dark"
           title="Framing op maandbedrag"
+          misuses="Transparency & limitations"
           text="Alleen een laag maandbedrag 'vanaf', gebaseerd op de laagste rente en de langste looptijd. Rente en totale kosten zijn hier niet te zien."
         >
           <p className="sg-calc-monthly">

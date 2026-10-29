@@ -1,6 +1,6 @@
 # Inleveren HCAID: Kredietrisico
 
-**Team:** Jur Kiestra & [naam duopartner]
+**Team:** Jur Kiestra & Peter van Berkum
 **Inleverdatum:** 4 november 2026
 
 ## Gedeployde apps
@@ -25,6 +25,6 @@ gemarkeerd te zien.
 
 | Criterium | Weging | Bewijs |
 |---|---|---|
-| Interactief prototype met logische ML-voorspelling | 40% | Beide apps live; neuraal netwerk (`ml/train.py`); tests op logische richting (`tests/test_api.py`); notebook |
+| Interactief prototype met logische ML-voorspelling | 40% | Beide apps live; monotoon neuraal netwerk (`ml/monotone.py`), aantoonbaar zonder onlogische sprongen (`tests/test_api.py`, notebook sectie 5) |
 | Ethiek en poster (Privacy, Bias, Explainability) | 40% | Poster; `docs/ethische-verantwoording.md`; fairness-audit in het notebook; "Ontwerpkeuzes tonen" in de apps |
-| UX (onboarding, limitations, transparency, confidence, feedback, data privacy) | 20% | Schuldwijzer zet ze allemaal in, SnelGeld misbruikt ze; wireframes in `design/wireframes.pdf` |
+| UX (onboarding, limitations, transparency, confidence, feedback, data privacy) | 20% | Schuldwijzer zet ze allemaal in, SnelGeld misbruikt ze (per dark pattern staat welke richtlijn); empathy map in `design-thinking/`; wireframes in `design/wireframes.pdf` |

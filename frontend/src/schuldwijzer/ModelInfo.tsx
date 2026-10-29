@@ -3,6 +3,13 @@ import { Note } from '../shared/annotate'
 import { decimal, pct } from '../shared/format'
 import type { Meta } from '../shared/types'
 
+const COMPARE_LABEL: Record<string, string> = {
+  baseline_altijd_good: 'Altijd "gaat goed" zeggen',
+  logistische_regressie: 'Logistische regressie',
+  gewoon_neuraal_netwerk: 'Gewoon neuraal netwerk',
+  monotoon_neuraal_netwerk: 'Monotoon neuraal netwerk (Schuldwijzer)',
+}
+
 export default function ModelInfo({ meta }: { meta: Meta }) {
   const navigate = useNavigate()
   const m = meta.model
@@ -32,7 +39,8 @@ export default function ModelInfo({ meta }: { meta: Meta }) {
             <div>
               <dt>Soort model</dt>
               <dd>
-                {m.type}, met {m.hidden_layers.join(' en ')} verborgen neuronen
+                {m.type}, met {m.hidden_units} verborgen neuronen. Het netwerk is zo gebouwd dat een gunstiger antwoord de
+                kans nooit kan verhogen (zie hieronder).
               </dd>
             </div>
             <div>
@@ -46,11 +54,44 @@ export default function ModelInfo({ meta }: { meta: Meta }) {
             <div>
               <dt>Hoe goed</dt>
               <dd>
-                {pct(m.test_accuracy)} goed bij een simpele ja/nee-grens. AUC {decimal(m.test_auc, 2)} (0,5 is gokken,
-                1 is perfect).
+                AUC {decimal(m.test_auc, 2)} op ongeziene aanvragen (0,5 is gokken, 1 is perfect). Bij een simpele
+                ja/nee-grens van 50% zat het {pct(m.test_accuracy)} van de keren goed.
               </dd>
             </div>
           </dl>
+        </section>
+
+        <section className="sw-info-section">
+          <h2>Waarom een monotoon netwerk?</h2>
+          <p>
+            Een gewoon neuraal netwerk volgt elke eigenaardigheid in de data. Dan kan “geen werk” ineens een lager
+            risico geven dan “korter dan 1 jaar in dienst”, of een langere looptijd veiliger lijken. Wij hebben
+            vastgelegd in welke richting tien antwoorden mogen werken: meer spaargeld, langer in dienst, een kortere
+            looptijd of een lager bedrag kan je kans nooit verhogen. We testen dat op honderden echte profielen.
+          </p>
+          <table className="sw-table">
+            <thead>
+              <tr>
+                <th scope="col">Model</th>
+                <th scope="col">AUC (test)</th>
+                <th scope="col">Profielen met een onlogische sprong</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(m.comparison).map(([k, v]) => (
+                <tr key={k}>
+                  <th scope="row">{COMPARE_LABEL[k] ?? k}</th>
+                  <td>{decimal(v.roc_auc, 2)}</td>
+                  <td>{k.startsWith('baseline') ? 'n.v.t.' : pct(v.onlogisch_max)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="sw-muted sw-small">
+            Een eenvoudige logistische regressie presteert bijna even goed. Die is volledig doorzichtig, maar ook die
+            maakt onlogische sprongen bij categorieën als dienstverband. Het monotone netwerk combineert de prestaties
+            met voorspellingen die je kunt uitleggen.
+          </p>
         </section>
 
         <section className="sw-info-section">
@@ -67,7 +108,7 @@ export default function ModelInfo({ meta }: { meta: Meta }) {
             <tbody>
               {m.bands.map((b) => (
                 <tr key={b.band}>
-                  <th scope="row">{b.band}</th>
+                  <th scope="row">{b.band.charAt(0).toUpperCase() + b.band.slice(1)}</th>
                   <td>
                     {pct(b.van)} tot {pct(b.tot)}
                   </td>
@@ -124,16 +165,35 @@ export default function ModelInfo({ meta }: { meta: Meta }) {
               <p>
                 Ook zonder leeftijd komt het model bij jongeren (25 of jonger) vaker uit op “hoog”:{' '}
                 {pct(age['25 of jonger'].geflagd)} tegen {pct(age['ouder dan 25'].geflagd)} bij ouderen. Dat komt
-                doordat antwoorden als dienstverband en woonsituatie samenhangen met leeftijd. Jongeren kwamen in de
-                data ook echt vaker in de problemen ({pct(age['25 of jonger'].werkelijk_bad)} tegen{' '}
-                {pct(age['ouder dan 25'].werkelijk_bad)}). Het aandeel vals alarm is vergelijkbaar:{' '}
-                {pct(age['25 of jonger'].fpr)} tegen {pct(age['ouder dan 25'].fpr)}.
+                doordat antwoorden als dienstverband en woonsituatie samenhangen met leeftijd (proxy-bias). Jongeren
+                kwamen in de data ook echt vaker in de problemen ({pct(age['25 of jonger'].werkelijk_bad)} tegen{' '}
+                {pct(age['ouder dan 25'].werkelijk_bad)}).{' '}
+                {Math.abs(age['25 of jonger'].fpr - age['ouder dan 25'].fpr) < 0.03 ? (
+                  <>
+                    Het aandeel vals alarm is vergelijkbaar: {pct(age['25 of jonger'].fpr)} tegen{' '}
+                    {pct(age['ouder dan 25'].fpr)}.
+                  </>
+                ) : (
+                  <>
+                    Maar jongeren krijgen ook vaker <strong>onterecht</strong> een waarschuwing:{' '}
+                    {pct(age['25 of jonger'].fpr)} van de jongeren die netjes afbetaalden, tegen{' '}
+                    {pct(age['ouder dan 25'].fpr)} van de ouderen. Omdat Schuldwijzer alleen waarschuwt en niets
+                    weigert, vinden we dat te verdedigen, maar het is een echt nadeel: een onnodige waarschuwing kan
+                    ontmoedigen.
+                  </>
+                )}
               </p>
               <p>
                 Tussen mannen en vrouwen is het verschil klein: {pct(sex['vrouw'].geflagd)} van de vrouwen en{' '}
-                {pct(sex['man'].geflagd)} van de mannen valt in “hoog”.
+                {pct(sex['man'].geflagd)} van de mannen valt in “hoog”, met vrijwel evenveel vals alarm (
+                {pct(sex['vrouw'].fpr)} en {pct(sex['man'].fpr)}).
               </p>
-              <p className="sw-muted sw-small">Gemeten op {m.n_test} testaanvragen. Kleine groepen, dus met een slag om de arm.</p>
+              <p className="sw-muted sw-small">
+                Gemeten op alle 1000 aanvragen, steeds voorspeld door een model dat die aanvraag niet had gezien
+                (out-of-fold), bij de grens die de app gebruikt. Er waren {age['25 of jonger'].n} jongeren, van wie{' '}
+                {age['25 of jonger'].n_good} de lening wél netjes afbetaalden: de cijfers over vals alarm zijn dus
+                indicatief.
+              </p>
             </>
           )}
         </section>

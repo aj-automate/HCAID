@@ -28,7 +28,7 @@ export default function Intro({ onStart, onExample }: { onStart: () => void; onE
         <dl className="sw-facts">
           <div>
             <dt>Wat Schuldwijzer doet</dt>
-            <dd>Een computermodel vergelijkt jouw situatie met 1000 eerdere leningen en schat het risico in.</dd>
+            <dd>Een computermodel vergelijkt jouw situatie met 1000 eerdere leningen, schat het risico in en legt uit waardoor.</dd>
           </div>
           <div>
             <dt>Wat het niet doet</dt>

@@ -27,6 +27,7 @@ export interface Band {
 
 export interface FairnessRow {
   n: number
+  n_good: number
   werkelijk_bad: number
   gemiddelde_kans: number
   geflagd: number
@@ -40,7 +41,7 @@ export interface Meta {
   not_used: { name: string; short: string }[]
   model: {
     type: string
-    hidden_layers: number[]
+    hidden_units: number
     dataset: string
     test_auc: number
     test_accuracy: number
@@ -50,6 +51,7 @@ export interface Meta {
     importance: { feature: string; label: string; mean: number; std: number }[]
     fairness: Record<string, Record<string, FairnessRow>>
     n_test: number
+    comparison: Record<string, { roc_auc: number; onlogisch_max: number }>
   }
 }
 
@@ -82,7 +84,12 @@ export interface Lever {
 export interface Prediction {
   probability: number
   band: Band
-  confidence: { label: 'zeker' | 'redelijk zeker' | 'twijfelgeval'; afstand_tot_grens: number }
+  confidence: {
+    label: 'duidelijk' | 'op de grens'
+    buurgroep: Band['band'] | null
+    marge: [number, number]
+    per_100: number
+  }
   base_rate: number
   explanation: Contribution[]
   counterfactuals: Counterfactual[]
@@ -99,6 +106,7 @@ export interface Offer {
   total: number
   closing_fee: number
   late_fee: number
+  legal_max_apr: number
   behind_the_scenes: {
     probability: number
     segment: string

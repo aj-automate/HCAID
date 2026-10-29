@@ -12,15 +12,17 @@ span.note { display: inline-block; }
 .note-on {
   outline: 2px dashed var(--note-color);
   outline-offset: 4px;
+  margin-top: 30px;
 }
+span.note-on { margin-top: 30px; }
 .note-ux { --note-color: var(--note-ux); }
 .note-ethiek { --note-color: var(--note-ethiek); }
 .note-dark { --note-color: var(--note-dark); }
 
 .note-chip {
   position: absolute;
-  top: -14px;
-  left: -2px;
+  top: -27px;
+  left: -6px;
   z-index: 20;
   display: inline-flex;
   align-items: center;
@@ -147,6 +149,7 @@ span.note { display: inline-block; }
 }
 .notes-title { display: block; font-weight: 600; }
 .notes-text { display: block; color: #4a4a4a; margin-top: 2px; }
+.notes-misuse { display: block; font-size: 12.5px; font-weight: 600; color: var(--note-color); margin-top: 1px; }
 .notes-empty { color: #666; }
 .notes-reopen {
   position: fixed;
@@ -162,4 +165,9 @@ span.note { display: inline-block; }
 
 @media (min-width: 1100px) {
   body.notes-shift { padding-right: 340px; }
+}
+
+@media (max-width: 640px) {
+  .notes-toolbar { right: 8px; bottom: 8px; }
+  .notes-switch { min-height: 40px; padding: 6px 10px; font-size: 13px; }
 }

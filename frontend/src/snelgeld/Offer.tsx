@@ -44,10 +44,11 @@ export default function Offer({
 
   if (confirmDecline) {
     return (
-      <div className="sg-card sg-offer">
+      <div className="sg-card sg-offer sg-confirm">
         <Note
           kind="dark"
           title="Confirmshaming en obstructie"
+          misuses="Control"
           text="Weigeren wordt ontmoedigd met verlies-framing en een dreigende wachttijd. De knop om echt te weigeren is klein en grijs."
         >
           <h1>Weet je het zeker?</h1>
@@ -72,6 +73,7 @@ export default function Offer({
         <Note
           kind="dark"
           title="Valse urgentie"
+          misuses="Control"
           text="Een aftelklok die bij nul stilletjes opnieuw begint. Tijdsdruk voorkomt dat iemand vergelijkt of er een nacht over slaapt."
         >
           <div className="sg-timer" role="timer">
@@ -84,6 +86,7 @@ export default function Offer({
           <Note
             kind="dark"
             title="Nep-zekerheid"
+            misuses="Confidence"
             text="'Goedgekeurd' en '98% match' suggereren zekerheid en een goede uitkomst. De echte voorspelling (hoog risico) wordt verzwegen en juist gebruikt om de rente te verhogen."
             inline
           >
@@ -96,6 +99,7 @@ export default function Offer({
           <Note
             kind="dark"
             title="Meer lenen bij hoog risico"
+            misuses="Control"
             text="Juist omdat het model een hoog risico voorspelt, biedt SnelGeld 50% méér geld aan, en zet die optie standaard aan. Meer schuld betekent meer rente-inkomsten."
           >
             <fieldset className="sg-amounts">
@@ -118,6 +122,7 @@ export default function Offer({
         <Note
           kind="dark"
           title="Framing op maandbedrag"
+          misuses="Transparency & limitations"
           text="Groot in beeld staat alleen het maandbedrag. De looptijd is opgerekt zodat het bedrag klein oogt; rente en totale kosten staan in kleine letters onderaan."
         >
           <p className="sg-monthly">
@@ -129,6 +134,7 @@ export default function Offer({
         <Note
           kind="dark"
           title="Ongevraagd product in het mandje"
+          misuses="Control"
           text="Een 'betalingsbeschermer' staat vooraf aan en wordt bij het maandbedrag opgeteld."
         >
           <label className="sg-addon">
@@ -145,6 +151,7 @@ export default function Offer({
         <Note
           kind="dark"
           title="Confirmshaming"
+          misuses="Control"
           text="De weigerknop is klein, grijs en schuldgevoel-oproepend geformuleerd."
           inline
         >
@@ -153,11 +160,12 @@ export default function Offer({
           </button>
         </Note>
 
-        <p className="sg-proof">Al 12.408 mensen gingen je deze maand voor</p>
+        <p className="sg-proof">Al 3.912 mensen gingen je deze maand voor</p>
 
         <Note
           kind="dark"
           title="Verborgen kosten in de kleine lettertjes"
+          misuses="Transparency & limitations"
           text="Het jaarlijks kostenpercentage, de totale terugbetaling en het delen van gegevens staan er wel, maar in klein, lichtgrijs, onleesbaar schrift."
         >
           <p className="sg-fine">

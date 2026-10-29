@@ -55,11 +55,11 @@ export default function NextStep({ state }: { state: SwState }) {
           <h2>Klaar? Wis je gegevens</h2>
           {state.cleared ? (
             <p role="status">
-              <strong>Je antwoorden en de inschatting zijn gewist.</strong> Op onze server stond niets.
+              <strong>Je antwoorden en de inschatting zijn gewist.</strong> Op onze server stonden je antwoorden nooit.
             </p>
           ) : (
             <>
-              <p>Je antwoorden staan alleen in dit browservenster. Met deze knop zijn ze direct weg.</p>
+              <p>Je antwoorden staan alleen in dit tabblad. Met deze knop zijn ze direct weg.</p>
               <button
                 type="button"
                 className="sw-btn sw-btn-secondary"

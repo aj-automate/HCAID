@@ -14,6 +14,9 @@ YOUNG_MARKUP = 1.5  # jongeren vergelijken minder vaak
 FOREIGN_MARKUP = 1.0  # discriminerende opslag op nationaliteit
 MAX_APR = 29.9
 CLOSING_FEE = 149.0
+# Wettelijk maximum voor consumptief krediet in Nederland per 1 januari 2026
+# (Rijksoverheid: wettelijke rente + 8 procentpunt). SnelGeld zit daar ver boven.
+LEGAL_MAX_APR = 12.0
 LATE_FEE = 35.0
 
 
@@ -64,6 +67,7 @@ def offer(values: dict, p: float, urgency: str, high_from: float) -> dict:
         "total": round(total, 2),
         "closing_fee": CLOSING_FEE,
         "late_fee": LATE_FEE,
+        "legal_max_apr": LEGAL_MAX_APR,
         "behind_the_scenes": {
             "probability": round(p, 4),
             "segment": segment,

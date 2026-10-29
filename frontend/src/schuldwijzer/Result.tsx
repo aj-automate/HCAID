@@ -6,13 +6,18 @@ import { euro, pct } from '../shared/format'
 import type { Band, Contribution, Prediction } from '../shared/types'
 import type { SwState } from './Schuldwijzer'
 
-const HEADLINE: Record<Band['band'], string> = {
-  hoog: 'Deze lening wordt waarschijnlijk lastig om terug te betalen',
-  gemiddeld: 'Deze lening is te doen, maar er is weinig ruimte voor tegenvallers',
-  laag: 'Deze lening lijkt goed te dragen',
-}
-
 const BAND_LABEL: Record<Band['band'], string> = { laag: 'Laag', gemiddeld: 'Gemiddeld', hoog: 'Hoog' }
+
+// De kop volgt de kans zelf, niet alleen de groep: "waarschijnlijk" pas boven 50%.
+function headline(p: Prediction) {
+  if (p.band.band === 'hoog') {
+    return p.probability >= 0.5
+      ? 'Deze lening wordt waarschijnlijk lastig om terug te betalen'
+      : 'Deze lening geeft een verhoogd risico op betalingsproblemen'
+  }
+  if (p.band.band === 'gemiddeld') return 'Deze lening is te doen, maar er is weinig ruimte voor tegenvallers'
+  return 'Deze lening lijkt goed te dragen'
+}
 
 const points = (d: number) => `${Math.round(Math.abs(d) * 100)} procentpunt`
 
@@ -29,7 +34,7 @@ export default function Result({ state }: { state: SwState }) {
       <p className="sw-eyebrow">
         Inschatting voor jouw lening van {euro(Number(values.credit_amount))} in {values.duration} maanden
       </p>
-      <h1>{HEADLINE[band]}</h1>
+      <h1>{headline(p)}</h1>
       <p className="sw-lede">
         Het model schat de kans op betalingsproblemen op <strong>{pct(p.probability)}</strong>. Dit is een
         inschatting, geen besluit. Jij beslist.
@@ -38,18 +43,18 @@ export default function Result({ state }: { state: SwState }) {
       <div className="sw-result-grid">
         <Note
           kind="ux"
-          title="Uitkomst in drie groepen"
-          text="Een kans van 84% zegt weinig zonder referentie. De drie groepen (laag, gemiddeld, hoog) maken de uitkomst leesbaar; het exacte percentage staat erbij."
+          title="Set expectations: kans op een schaal"
+          text="Een kaal percentage zegt weinig. De schaal toont de kans, de onzekerheidsmarge en de drie groepen naar echte verhouding, zodat de uitkomst in één oogopslag te lezen is."
         >
-          <p className="sw-lab">Risico op betalingsproblemen</p>
-          <Meter p={p} />
+          <p className="sw-lab">Kans op betalingsproblemen</p>
+          <Meter p={p} bands={state.meta.model.bands} />
         </Note>
         <Note
           kind="ux"
           title="Confidence"
-          text="Zekerheid in woorden én cijfers: hoe dicht de inschatting bij een groepsgrens ligt, en hoe vaak mensen in deze groep echt in de problemen kwamen. Zo weet je hoeveel vertrouwen de uitkomst verdient."
+          text="Zekerheid op twee manieren: een marge (hoe ver modellen op net iets andere data uiteenlopen) en een frequentie (hoeveel van de 100 vergelijkbare aanvragers echt problemen kregen). Zo weet je hoeveel vertrouwen de uitkomst verdient."
         >
-          <p className="sw-lab">Hoe zeker is het model?</p>
+          <p className="sw-lab">Hoe zeker is dit?</p>
           <Confidence p={p} />
         </Note>
       </div>
@@ -81,7 +86,7 @@ export default function Result({ state }: { state: SwState }) {
       <Note
         kind="ux"
         title="Explainability"
-        text="Waarom deze uitkomst? Per antwoord zie je hoeveel procentpunt het de kans verhoogt of verlaagt (exacte Shapley-waarden). Don't say what without saying why."
+        text="Waarom deze uitkomst? Per antwoord zie je hoeveel procentpunt het de kans verhoogt of verlaagt ten opzichte van een gemiddelde aanvrager (exacte Shapley-waarden). Geen uitkomst zonder reden."
       >
         <Factors p={p} />
       </Note>
@@ -89,7 +94,7 @@ export default function Result({ state }: { state: SwState }) {
       <Note
         kind="ux"
         title="Control"
-        text="De gebruiker houdt de regie: haalbare alternatieven en direct zelf schuiven met bedrag en looptijd. Het model is een hulpmiddel bij de beslissing, geen beslisser."
+        text="De gebruiker houdt de regie: haalbare alternatieven (nooit een langere schuld) en zelf schuiven met bedrag en looptijd. Het model is een hulpmiddel bij de beslissing, geen beslisser."
       >
         <Options state={state} />
       </Note>
@@ -104,15 +109,15 @@ export default function Result({ state }: { state: SwState }) {
       <Note
         kind="ux"
         title="Limitations"
-        text="Eerlijk over waar het model tekortschiet: oude Duitse data, geen zicht op inkomen of BKR, en een foutmarge. Dit voorkomt blind vertrouwen."
+        text="Eerlijk over waar het model tekortschiet: geen zicht op inkomen of BKR, oude Duitse data, en ook bij 'laag' komt een deel toch in de problemen. Dit voorkomt blind vertrouwen en valse geruststelling."
       >
-        <Limitations />
+        <Limitations bands={state.meta.model.bands} />
       </Note>
 
       <Note
         kind="ux"
         title="Feedback"
-        text="Expliciete feedback met duidelijke erkenning: we vertellen wat we met de feedback doen (controleren of het model groepen structureel verkeerd inschat) en slaan alleen het oordeel op."
+        text="Expliciete feedback met duidelijke erkenning: we vertellen wat we met de feedback doen (controleren of het model groepen structureel verkeerd inschat) en bewaren nooit je antwoorden."
       >
         <Feedback band={band} />
       </Note>
@@ -129,54 +134,77 @@ export default function Result({ state }: { state: SwState }) {
   )
 }
 
-function Meter({ p }: { p: Prediction }) {
-  const bands: Band['band'][] = ['laag', 'gemiddeld', 'hoog']
-  const idx = bands.indexOf(p.band.band)
-  const within = (p.probability - p.band.van) / Math.max(0.0001, p.band.tot - p.band.van)
-  const left = ((idx + Math.min(1, Math.max(0, within))) / 3) * 100
+function Meter({ p, bands }: { p: Prediction; bands: Band[] }) {
+  const [lo, hi] = p.confidence.marge
+  const at = (x: number) => `${Math.min(100, Math.max(0, x * 100))}%`
   return (
-    <div className="sw-meter" role="img" aria-label={`Risico ${p.band.band}, ${pct(p.probability)}`}>
+    <div className="sw-meter" role="img" aria-label={`Kans ${pct(p.probability)}, marge ${pct(lo)} tot ${pct(hi)}, groep ${p.band.band}`}>
       <div className="sw-meter-track">
-        {bands.map((b, i) => (
-          <span key={b} className={i === idx ? `on on-${b}` : ''} />
+        {bands.map((b) => (
+          <span
+            key={b.band}
+            className={`sw-meter-seg ${b.band === p.band.band ? `on on-${b.band}` : ''}`}
+            style={{ left: at(b.van), width: at(Math.min(1, b.tot) - b.van) }}
+          />
         ))}
-        <span className="sw-meter-marker" style={{ left: `${left}%` }} aria-hidden="true">
+        <span className="sw-meter-range" style={{ left: at(lo), width: at(hi - lo) }} aria-hidden="true" />
+        <span className="sw-meter-marker" style={{ left: at(p.probability) }} aria-hidden="true">
           <span>{pct(p.probability)}</span>
         </span>
       </div>
       <div className="sw-meter-labels" aria-hidden="true">
         {bands.map((b) => (
-          <span key={b} className={b === p.band.band ? 'on' : ''}>
-            {BAND_LABEL[b]}
+          <span
+            key={b.band}
+            className={b.band === p.band.band ? 'on' : ''}
+            style={{ left: at((b.van + Math.min(1, b.tot)) / 2) }}
+          >
+            {BAND_LABEL[b.band]}
           </span>
         ))}
+      </div>
+      <div className="sw-meter-scale" aria-hidden="true">
+        <span>0%</span>
+        <span>50%</span>
+        <span>100%</span>
       </div>
     </div>
   )
 }
 
 function Confidence({ p }: { p: Prediction }) {
-  const sentence = {
-    zeker: <><strong>Zeker:</strong> je valt duidelijk in de groep “{p.band.band}”</>,
-    'redelijk zeker': <><strong>Redelijk zeker:</strong> je valt in de groep “{p.band.band}”</>,
-    twijfelgeval: <><strong>Twijfelgeval:</strong> je zit op de rand van de groep “{p.band.band}”</>,
-  }[p.confidence.label]
+  const c = p.confidence
+  const [lo, hi] = c.marge
   return (
     <div className="sw-confidence">
-      <p className="sw-confidence-value">{sentence}</p>
-      <p>
-        Van eerdere aanvragers in deze groep kreeg <strong>{pct(p.band.werkelijk_bad)}</strong> echt
-        betalingsproblemen.{' '}
-        {p.band.band === 'hoog'
-          ? 'Dat betekent ook dat een flink deel het wél redde.'
-          : p.band.band === 'laag'
-            ? 'Laag is dus niet hetzelfde als geen risico.'
-            : 'De uitkomst kan beide kanten op.'}
+      <p className="sw-confidence-value">
+        {c.label === 'duidelijk' ? (
+          <>
+            <strong>Duidelijk</strong> in de groep “{p.band.band}”
+          </>
+        ) : (
+          <>
+            <strong>Op de grens</strong> tussen “{p.band.band}” en “{c.buurgroep}”
+          </>
+        )}
       </p>
-      {p.confidence.label === 'twijfelgeval' && (
+      <p>
+        Marge: {pct(lo)} tot {pct(hi)}. Modellen die op net iets andere data zijn getraind, komen hierbinnen uit.
+      </p>
+      <div className="sw-dots-wrap">
+        <div className="sw-dots" role="img" aria-label={`${c.per_100} van de 100`}>
+          {Array.from({ length: 100 }, (_, i) => (
+            <i key={i} className={i < c.per_100 ? 'bad' : ''} />
+          ))}
+        </div>
+        <p>
+          Van <strong>100 eerdere aanvragers</strong> met een vergelijkbare inschatting kregen er{' '}
+          <strong>{c.per_100}</strong> echt betalingsproblemen, en {100 - c.per_100} niet.
+        </p>
+      </div>
+      {c.label === 'op de grens' && (
         <p className="sw-confidence-warn">
-          Je zit dicht bij de grens met een andere groep. Een klein verschil in je antwoorden kan de uitkomst
-          veranderen.
+          Een klein verschil in je antwoorden kan je in de groep “{c.buurgroep}” brengen.
         </p>
       )}
     </div>
@@ -197,6 +225,14 @@ function Factors({ p }: { p: Prediction }) {
         Voor een gemiddelde aanvrager schat het model {pct(base)}. Jouw antwoorden brengen dat naar{' '}
         <strong>{pct(p.probability)}</strong>. Zo telt elk antwoord mee:
       </p>
+      <div className="sw-factor sw-factor-axis" aria-hidden="true">
+        <span />
+        <span className="sw-factor-axis-labels">
+          <span>← verlaagt risico</span>
+          <span>verhoogt risico →</span>
+        </span>
+        <span />
+      </div>
       <ul>
         {shown.map((c) => (
           <FactorRow key={c.feature} c={c} max={max} />
@@ -225,7 +261,7 @@ function FactorRow({ c, max }: { c: Contribution; max: number }) {
         <span className="sw-factor-half sw-factor-down">{!up && <i style={{ width }} />}</span>
         <span className="sw-factor-half sw-factor-up">{up && <i style={{ width }} />}</span>
       </span>
-      <span className="sw-factor-effect">
+      <span className={`sw-factor-effect ${tiny ? '' : up ? 'is-up' : 'is-down'}`}>
         {tiny ? 'nauwelijks effect' : `${up ? '+' : '−'}${points(c.contribution)}`}
         <span className="visually-hidden">{tiny ? '' : up ? ' hoger risico' : ' lager risico'}</span>
       </span>
@@ -236,10 +272,11 @@ function FactorRow({ c, max }: { c: Contribution; max: number }) {
 function Options({ state }: { state: SwState }) {
   const p = state.prediction!
   const values = state.values!
+  const [applied, setApplied] = useState<string | null>(null)
   const amountCfg = state.meta.features.find((f) => f.name === 'credit_amount')!
   const durCfg = state.meta.features.find((f) => f.name === 'duration')!
   const monthly = Number(values.credit_amount) / Number(values.duration)
-  const helpsLittle = p.counterfactuals.every((c) => c.band === p.band.band) && p.levers.length > 0
+  const helpsLittle = p.counterfactuals.length === 0 && p.band.band !== 'laag' && p.levers.length > 0
 
   return (
     <section className="sw-options" aria-labelledby="options-h">
@@ -251,7 +288,7 @@ function Options({ state }: { state: SwState }) {
             <p className="sw-muted">
               {p.band.band === 'laag'
                 ? 'Je risico is al laag. Aan de lening hoeft niets te veranderen.'
-                : 'Met een kleiner bedrag of andere looptijd daalt het risico bij jou niet merkbaar.'}
+                : 'Minder lenen of korter afbetalen (zonder hoger maandbedrag) verlaagt het risico bij jou niet merkbaar.'}
             </p>
           )}
           <ul className="sw-option-list">
@@ -270,7 +307,10 @@ function Options({ state }: { state: SwState }) {
                 <button
                   type="button"
                   className="sw-btn sw-btn-small"
-                  onClick={() => state.update({ ...values, credit_amount: c.credit_amount, duration: c.duration })}
+                  onClick={() => {
+                    state.update({ ...values, credit_amount: c.credit_amount, duration: c.duration })
+                    setApplied(`Toegepast: ${euro(c.credit_amount)} in ${c.duration} maanden. De inschatting hierboven is bijgewerkt.`)
+                  }}
                 >
                   Probeer dit
                 </button>
@@ -278,10 +318,11 @@ function Options({ state }: { state: SwState }) {
             ))}
           </ul>
           {helpsLittle && (
-            <p className="sw-muted sw-small">
-              Eerlijk gezegd: aan de lening schuiven helpt bij jou weinig. Je situatie weegt zwaarder.
-            </p>
+            <p className="sw-muted sw-small">Eerlijk gezegd: aan de lening schuiven helpt bij jou weinig. Je situatie weegt zwaarder.</p>
           )}
+          <p className="sw-applied" aria-live="polite">
+            {applied}
+          </p>
         </div>
         <div>
           <h3>Aan je situatie, op termijn</h3>
@@ -306,7 +347,7 @@ function Options({ state }: { state: SwState }) {
 
       <div className="sw-whatif">
         <h3>Probeer zelf</h3>
-        <p className="sw-muted">Schuif met bedrag en looptijd. De inschatting hierboven past zich direct aan.</p>
+        <p className="sw-muted">Schuif met bedrag en looptijd en zie direct wat het model ervan vindt.</p>
         <div className="sw-whatif-grid">
           <label>
             <span>
@@ -335,26 +376,35 @@ function Options({ state }: { state: SwState }) {
             />
           </label>
         </div>
-        <p className="sw-whatif-now" aria-live="polite">
-          Nu: kans {pct(p.probability)}, groep “{p.band.band}”, ongeveer {euro(Number(values.credit_amount) / Number(values.duration))} per maand
-          aan aflossing (zonder rente).
-        </p>
+        <div className="sw-whatif-now" aria-live="polite">
+          <span className={`sw-whatif-chip on-${p.band.band}`}>{BAND_LABEL[p.band.band]}</span>
+          <span>
+            Kans <strong>{pct(p.probability)}</strong> · ongeveer {euro(Number(values.credit_amount) / Number(values.duration))} per
+            maand aan aflossing (zonder rente)
+          </span>
+        </div>
       </div>
     </section>
   )
 }
 
-function Limitations() {
+function Limitations({ bands }: { bands: Band[] }) {
+  const laag = bands.find((b) => b.band === 'laag')!
+  const hoog = bands.find((b) => b.band === 'hoog')!
+  const oneIn = Math.max(2, Math.round(1 / Math.max(laag.werkelijk_bad, 0.01)))
   return (
     <section className="sw-limits" aria-labelledby="limits-h">
       <h2 id="limits-h">Houd hier rekening mee</h2>
       <ul>
+        <li>
+          “Laag” is geen garantie: ook in die groep kwam ongeveer 1 op de {oneIn} mensen toch in de problemen. En in “hoog”
+          redde {pct(1 - hoog.werkelijk_bad)} het wél.
+        </li>
         <li>Het model kent je inkomen, vaste lasten en BKR-registratie niet. Het ziet alleen deze 10 antwoorden.</li>
         <li>
           Het is getraind op 1000 leningen uit Duitsland in de jaren ’70. Bedragen zijn omgerekend naar euro’s; de
           koopkracht van toen is anders.
         </li>
-        <li>Op nieuwe aanvragen zat het model er ongeveer 1 op de 4 keer naast.</li>
         <li>Het is een studentenproject en niet getest op de Nederlandse situatie van nu.</li>
       </ul>
       <Link to="/schuldwijzer/hoe-het-werkt">Meer over hoe het model werkt</Link>
@@ -426,14 +476,13 @@ function Feedback({ band }: { band: Band['band'] }) {
         <div className="sw-feedback-done" role="status">
           <p>
             <strong>Dank je.</strong>{' '}
-            {agree
-              ? 'Fijn om te weten dat de inschatting herkenbaar is.'
-              : 'Juist deze reacties zijn waardevol.'}{' '}
-            We bewaren alleen je oordeel en de risicogroep, niet je antwoorden. Zeggen veel mensen in één groep
-            “klopt niet”, dan is dat voor ons het signaal om het model voor die groep opnieuw te testen.
+            {agree ? 'Fijn om te weten dat de inschatting herkenbaar is.' : 'Juist deze reacties zijn waardevol.'} We
+            bewaren je oordeel, de risicogroep en je toelichting als je die gaf, maar nooit je antwoorden. Zeggen veel
+            mensen in één groep “klopt niet”, dan is dat voor ons het signaal om het model voor die groep opnieuw te
+            testen.
           </p>
           <p className="sw-muted">
-            Tot nu toe {counts.total} reacties, waarvan {counts.disagree} “klopt niet”.
+            Tot nu toe {counts.total} {counts.total === 1 ? 'reactie' : 'reacties'}, waarvan {counts.disagree} “klopt niet”.
           </p>
         </div>
       )}

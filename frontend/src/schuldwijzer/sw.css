@@ -208,27 +208,28 @@
   border-bottom: 1px solid var(--rule);
 }
 .sw-lab { font-weight: 700; margin-bottom: 10px; }
-.sw-result[aria-busy='true'] .sw-meter-marker,
+.sw-result[aria-busy='true'] .sw-meter-marker, .sw-result[aria-busy='true'] .sw-meter-range,
 .sw-result[aria-busy='true'] .sw-whatif-now { opacity: 0.6; }
 
 .sw-meter { padding-top: 30px; }
-.sw-meter-track { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
-.sw-meter-track > span:not(.sw-meter-marker) { height: 12px; background: var(--surf); }
-.sw-meter-track > span.on-laag { background: var(--low); }
-.sw-meter-track > span.on-gemiddeld { background: var(--mid); }
-.sw-meter-track > span.on-hoog { background: var(--risk); }
+.sw-meter-track { position: relative; height: 14px; background: var(--surf); }
+.sw-meter-seg { position: absolute; top: 0; bottom: 0; border-right: 2px solid #fff; background: #dfe6ec; }
+.sw-meter-seg.on-laag { background: var(--low); }
+.sw-meter-seg.on-gemiddeld { background: var(--mid); }
+.sw-meter-seg.on-hoog { background: var(--risk); }
+.sw-meter-range { position: absolute; top: -4px; bottom: -4px; border: 2px solid var(--ink); border-radius: 2px; background: rgba(11, 31, 51, 0.12); transition: left 0.25s ease-out, width 0.25s ease-out; }
 .sw-meter-marker {
   position: absolute;
-  top: -8px;
+  top: -10px;
   width: 3px;
-  height: 28px;
+  height: 34px;
   margin-left: -1px;
   background: var(--ink);
   transition: left 0.25s ease-out;
 }
 .sw-meter-marker span {
   position: absolute;
-  bottom: 30px;
+  bottom: 36px;
   left: 50%;
   transform: translateX(-50%);
   font-weight: 700;
@@ -236,10 +237,16 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.sw-meter-labels { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 8px; font-size: 15px; color: var(--muted); }
-.sw-meter-labels span:nth-child(2) { text-align: center; }
-.sw-meter-labels span:nth-child(3) { text-align: right; }
+.sw-meter-labels { position: relative; height: 22px; margin-top: 8px; font-size: 15px; color: var(--muted); }
+.sw-meter-labels span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
 .sw-meter-labels span.on { color: var(--ink); font-weight: 700; }
+.sw-meter-scale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 2px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.sw-dots-wrap { display: grid; grid-template-columns: 112px 1fr; gap: 14px; align-items: center; margin: 12px 0 8px; }
+.sw-dots { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: 112px; }
+.sw-dots i { display: block; aspect-ratio: 1; border-radius: 50%; background: #cfd9e1; }
+.sw-dots i.bad { background: var(--risk); }
+.sw-dots-wrap p { margin: 0; }
 
 .sw-confidence p { margin-bottom: 8px; color: var(--text); }
 .sw-confidence-value { font-size: 19px; }
@@ -269,13 +276,23 @@
 .sw-factor-bar { display: grid; grid-template-columns: 1fr 1fr; height: 12px; }
 .sw-factor-half { position: relative; display: block; }
 .sw-factor-down { border-right: 2px solid var(--ink); }
-.sw-factor-down i { position: absolute; right: 0; top: 1px; bottom: 1px; background: #7d9fb3; }
-.sw-factor-up i { position: absolute; left: 0; top: 1px; bottom: 1px; background: var(--acc); }
+.sw-factor-down i { position: absolute; right: 0; top: 1px; bottom: 1px; background: var(--low); }
+.sw-factor-up i { position: absolute; left: 0; top: 1px; bottom: 1px; background: var(--risk); }
 .sw-factor-effect { font-size: 15px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text); }
+.sw-factor-effect.is-up { color: #9a3412; }
+.sw-factor-effect.is-down { color: var(--low); }
+.sw-factor-axis { border-bottom: 1px solid var(--rule); padding: 0 0 4px; }
+.sw-factor-axis-labels { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.sw-applied { min-height: 24px; margin-top: 8px; font-size: 15px; color: var(--low); font-weight: 600; }
+.sw-whatif-chip { display: inline-block; padding: 2px 10px; margin-right: 10px; color: #fff; font-weight: 700; }
+.sw-whatif-chip.on-laag { background: var(--low); }
+.sw-whatif-chip.on-gemiddeld { background: var(--mid); }
+.sw-whatif-chip.on-hoog { background: var(--risk); }
 
 .sw-options { margin-bottom: 40px; }
 .sw-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
 .sw .sw-option-list { list-style: none; padding: 0; margin: 0; }
+.sw-options-grid > div { min-height: 120px; }
 .sw-option-list li {
   display: flex;
   justify-content: space-between;
@@ -294,7 +311,7 @@
 .sw-whatif-grid label { display: flex; flex-direction: column; gap: 6px; }
 .sw-whatif-grid strong { font-variant-numeric: tabular-nums; }
 .sw-whatif input[type='range'] { width: 100%; accent-color: var(--acc); }
-.sw-whatif-now { margin-top: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sw-whatif-now { margin-top: 14px; font-variant-numeric: tabular-nums; display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
 
 .sw-changed { margin: -16px 0 32px; color: var(--muted); font-size: 15px; }
 
@@ -345,7 +362,7 @@
 .sw-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; margin-bottom: 8px; }
 .sw-table th, .sw-table td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); }
 .sw-table thead th { font-size: 15px; color: var(--muted); font-weight: 600; }
-.sw-table tbody th { text-transform: capitalize; }
+.sw-table tbody th { font-weight: 600; }
 .sw .sw-importance { list-style: none; padding: 0; margin: 12px 0 0; }
 .sw-importance li { display: grid; grid-template-columns: 220px 1fr; gap: 16px; align-items: center; margin: 0; padding: 6px 0; }
 .sw-importance-bar { height: 10px; background: var(--surf); }
@@ -388,10 +405,11 @@
 }
 @media (max-width: 420px) {
   .sw-bar .sw-logo { font-size: 17px; }
-  .sw-bar nav a:nth-child(3) { display: none; }
+  .sw-bar nav a:nth-child(1) { display: none; }
 }
 
 /* Ruimte voor de vaste knop "Ontwerpkeuzes tonen" */
 .sw-footer { padding-bottom: 80px; }
 .sw-info-section p { margin-bottom: 10px; max-width: 760px; }
 .sw-info-section h3 { margin-top: 20px; }
+.sw-number input[type='range'].is-empty { opacity: 0.35; }

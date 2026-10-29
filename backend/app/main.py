@@ -17,7 +17,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from backend.app.pricing import offer
-from ml.config import DAMIAN, FEATURES, MODEL_DIR, ROOT, SENSITIVE
+from ml.config import DAMIAN, FEATURES, MODEL_DIR, ROOT, SCHULDWIJZER_EXCLUDE, SENSITIVE
 from ml.explain import Predictor
 
 app = FastAPI(title="HCAID Kredietrisico", version="1.0")
@@ -32,39 +32,48 @@ _feedback_lock = threading.Lock()
 
 
 # ---------- validatie ----------
-def validate(values: dict, features: list[str]) -> dict:
+def validate(values: dict, features: list[str], exclude: dict | None = None) -> dict:
+    """Controleer de invoer en geef foutmeldingen in gewone taal."""
     clean = {}
     for f in features:
-        if f not in values:
-            raise HTTPException(422, f"Ontbrekend veld: {f}")
-        cfg, v = FEATURES[f], values[f]
+        cfg = FEATURES[f]
+        label = cfg["short"]
+        if f not in values or values[f] in (None, ""):
+            raise HTTPException(422, f"{label} ontbreekt.")
+        v = values[f]
         if "options" in cfg:
-            keys = list(cfg["options"].keys())
+            keys = [k for k in cfg["options"] if k not in (exclude or {}).get(f, [])]
             if isinstance(keys[0], int):
+                if isinstance(v, bool) or (isinstance(v, float) and not v.is_integer()):
+                    raise HTTPException(422, f"Kies een geldige optie bij {label.lower()}.")
                 try:
                     v = int(v)
                 except (TypeError, ValueError):
-                    raise HTTPException(422, f"Ongeldige waarde voor {f}")
+                    raise HTTPException(422, f"Kies een geldige optie bij {label.lower()}.")
             if v not in keys:
-                raise HTTPException(422, f"Ongeldige waarde voor {f}: {v}")
+                raise HTTPException(422, f"Kies een geldige optie bij {label.lower()}.")
         else:
+            if isinstance(v, bool):
+                raise HTTPException(422, f"{label} moet een getal zijn.")
             try:
                 v = float(v)
             except (TypeError, ValueError):
-                raise HTTPException(422, f"{f} moet een getal zijn")
-            if not cfg["min"] <= v <= cfg["max"]:
-                raise HTTPException(422, f"{f} moet tussen {cfg['min']} en {cfg['max']} liggen")
+                raise HTTPException(422, f"{label} moet een getal zijn.")
+            if not (cfg["min"] <= v <= cfg["max"]):
+                unit = "euro" if cfg.get("unit") == "eur" else cfg.get("unit", "")
+                raise HTTPException(422, f"{label} moet tussen {cfg['min']} en {cfg['max']} {unit} liggen.".replace("  ", " "))
         clean[f] = v
     return clean
 
 
-def feature_meta(features: list[str]) -> list[dict]:
+def feature_meta(features: list[str], exclude: dict | None = None) -> list[dict]:
     out = []
     for f in features:
         cfg = FEATURES[f]
         item = {"name": f, "question": cfg["question"], "short": cfg["short"], "why": cfg.get("why")}
         if "options" in cfg:
-            item["options"] = [{"value": k, "label": v} for k, v in cfg["options"].items()]
+            skip = (exclude or {}).get(f, [])
+            item["options"] = [{"value": k, "label": v} for k, v in cfg["options"].items() if k not in skip]
         else:
             item.update({k: cfg[k] for k in ("unit", "min", "max", "step")})
         out.append(item)
@@ -81,13 +90,14 @@ def health():
 def meta(name: Literal["schuldwijzer", "snelgeld"]):
     P = PREDICTORS[name]
     m = P.meta
+    exclude = SCHULDWIJZER_EXCLUDE if name == "schuldwijzer" else {}
     return {
-        "features": feature_meta(P.features),
+        "features": feature_meta(P.features, exclude),
         "defaults": {f: DAMIAN[f] for f in P.features},
         "not_used": [{"name": f, "short": FEATURES[f]["short"]} for f in SENSITIVE if f not in P.features],
         "model": {
-            "type": "Neuraal netwerk (MLPClassifier), gekalibreerd",
-            "hidden_layers": m["best_params"]["hidden_layer_sizes"],
+            "type": "Monotoon neuraal netwerk, gekalibreerd",
+            "hidden_units": m["best_params"]["hidden"],
             "dataset": "German Credit (Statlog), 1000 leningen, Duitsland jaren '70",
             "test_auc": m["test"]["roc_auc"],
             "test_accuracy": m["test"]["accuracy_05"],
@@ -97,8 +107,12 @@ def meta(name: Literal["schuldwijzer", "snelgeld"]):
             "importance": [
                 {**i, "label": FEATURES[i["feature"]]["short"]} for i in m["importance"]
             ],
-            "fairness": m["fairness_test"],
+            "fairness": m["fairness"],
             "n_test": m["n_test"],
+            "comparison": {
+                k: {"roc_auc": v["roc_auc"], "onlogisch_max": v["onlogisch_max"]}
+                for k, v in m["comparison"].items()
+            },
         },
     }
 
@@ -111,13 +125,13 @@ class PredictIn(BaseModel):
 @app.post("/api/schuldwijzer/predict")
 def schuldwijzer_predict(body: PredictIn):
     P = PREDICTORS["schuldwijzer"]
-    values = validate(body.values, P.features)
+    values = validate(body.values, P.features, SCHULDWIJZER_EXCLUDE)
     p = P.proba(values)
     band = P.band(p)
     return {
         "probability": round(p, 4),
         "band": band,
-        "confidence": P.confidence(p),
+        "confidence": P.confidence(values, p),
         "base_rate": P.meta["base_rate"],
         "explanation": P.explain(values),
         "counterfactuals": P.counterfactuals(values),

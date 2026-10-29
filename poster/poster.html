@@ -23,7 +23,7 @@
   .team { text-align: right; font-size: 12pt; color: #c9d3dc; line-height: 1.5; }
   .team strong { color: #fff; font-size: 13pt; }
 
-  main { flex: 1; padding: 8mm 18mm 0; display: flex; flex-direction: column; gap: 6mm; }
+  main { flex: 1; padding: 8mm 18mm 0; display: flex; flex-direction: column; gap: 5mm; }
   h2 { font-size: 17pt; line-height: 1.15; margin: 0 0 2.5mm; font-weight: 800; }
   h3 { font-size: 12pt; margin: 0 0 1.5mm; font-weight: 700; }
   p { margin: 0 0 2mm; }
@@ -47,7 +47,7 @@
   .scen .hd { font-weight: 700; font-size: 10pt; border-bottom: .6mm solid var(--ink); }
   .scen .ph { font-weight: 700; color: var(--muted); }
 
-  .shots { display: grid; grid-template-columns: 1.6fr 1fr 0.5fr; gap: 7mm; align-items: start; }
+  .shots { display: grid; grid-template-columns: 1.7fr 0.9fr 0.45fr; gap: 7mm; align-items: start; }
   .shot { margin: 0; }
   .shot img { display: block; width: 100%; border: .4mm solid #9aa7b2; }
   .shot figcaption { margin-top: 2mm; font-size: 9.6pt; color: var(--text); }
@@ -56,7 +56,7 @@
   .tagline { display: inline-block; font-size: 9pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #fff; padding: .6mm 2.2mm; margin-bottom: 2mm; }
   .tag-good { background: var(--acc); } .tag-bad { background: var(--bad); } .tag-eth { background: #6d4c00; }
 
-  .matrix th, .matrix td { vertical-align: top; text-align: left; padding: 2.2mm 3mm 2.2mm 0; border-bottom: .3mm solid var(--rule); font-size: 9.8pt; }
+  .matrix th, .matrix td { vertical-align: top; text-align: left; padding: 2.2mm 3mm 2.2mm 0; border-bottom: .3mm solid var(--rule); font-size: 9.4pt; }
   .matrix thead th { font-size: 10.5pt; border-bottom: .8mm solid var(--ink); }
   .matrix tbody th { width: 30mm; font-size: 13pt; font-weight: 800; }
   .matrix td:nth-child(2) { width: 62mm; color: var(--text); }
@@ -85,7 +85,7 @@
     <h1>Eén voorspelling, twee moralen</h1>
     <p class="lede">Hetzelfde soort neurale netwerk voorspelt de kans dat iemand een lening niet kan terugbetalen. <b>Schuldwijzer</b> gebruikt die kans om te beschermen. <b>SnelGeld</b> gebruikt hem om aan kwetsbare mensen te verdienen.</p>
   </div>
-  <div class="team"><strong data-edit="team">Jur Kiestra &amp; [naam duopartner]</strong><br>Kredietrisico · German Credit</div>
+  <div class="team"><strong data-edit="team">Jur Kiestra &amp; Peter van Berkum</strong><br>Kredietrisico · German Credit</div>
 </header>
 
 <main>
@@ -93,37 +93,38 @@
     <div class="col">
       <p class="k">Data en model</p>
       <h2>De voorspelling</h2>
-      <p>German Credit (Statlog): 1000 leningen uit Duitsland, jaren ’70. Bij 30% ging het mis. Een gekalibreerd neuraal netwerk (MLP, 8 neuronen) voorspelt <b>de kans op betalingsproblemen</b>.</p>
+      <p>German Credit: 1000 Duitse leningen uit de jaren ’70, bij 30% ging het mis. Een <b>monotoon neuraal netwerk</b> voorspelt de kans op betalingsproblemen. Meer spaargeld of een kortere looptijd kan de kans nooit verhogen: domeinkennis als harde regel.</p>
       <div class="stats">
-        <div class="stat"><b class="num">0,78</b><span>AUC Schuldwijzer (10 features)</span></div>
-        <div class="stat"><b class="num">0,82</b><span>AUC SnelGeld (20 features)</span></div>
-        <div class="stat"><b class="num">0,50</b><span>gokken (baseline)</span></div>
+        <div class="stat"><b class="num">0,80</b><span>AUC Schuldwijzer (10 features)</span></div>
+        <div class="stat"><b class="num">0%</b><span>onlogische sprongen (gewoon netwerk: 99%)</span></div>
+        <div class="stat"><b class="num">0,79</b><span>logistische regressie (white box)</span></div>
       </div>
       <p><b>Recall boven precision:</b> een gemist risico kost Damian jaren schuld, een vals alarm een gesprek. Daarom drie groepen, op recall gekozen:</p>
       <table class="mini">
         <thead><tr><th>Groep</th><th>Kans</th><th>Kreeg echt problemen</th></tr></thead>
         <tbody>
-          <tr><td>Laag</td><td class="num">&lt; 14%</td><td class="num">9%</td></tr>
-          <tr><td>Gemiddeld</td><td class="num">14 tot 36%</td><td class="num">26%</td></tr>
-          <tr><td>Hoog</td><td class="num">&gt; 36%</td><td class="num">55%</td></tr>
+          <tr><td>Laag</td><td class="num">&lt; 15%</td><td class="num">9%</td></tr>
+          <tr><td>Gemiddeld</td><td class="num">15 tot 40%</td><td class="num">27%</td></tr>
+          <tr><td>Hoog</td><td class="num">&gt; 40%</td><td class="num">56%</td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="col">
-      <p class="k">Design thinking: persona</p>
+      <p class="k">Design thinking: persona en empathy map</p>
       <h2>Damian, 24</h2>
       <p class="quote">“Ik regel het liever zelf. En het liefst snel.”</p>
       <p>Automonteur, één jaar in dienst, huurt een kamer, weinig spaargeld, al een afbetaling bij een winkel. Zijn auto is kapot en de bank zei nee.</p>
       <table class="mini">
-        <thead><tr><th>Trek</th><th class="good-c">Schuldwijzer</th><th class="bad-c">SnelGeld</th></tr></thead>
+        <thead><tr><th>Empathy map</th><th class="good-c">Schuldwijzer</th><th class="bad-c">SnelGeld</th></tr></thead>
         <tbody>
-          <tr><td>Trots</td><td>anoniem, geen oordeel</td><td>“geen lastige vragen”</td></tr>
-          <tr><td>Ongeduldig</td><td>10 vragen, direct resultaat</td><td>aftelklok, haast-opslag</td></tr>
-          <tr><td>Afgewezen</td><td>“jij beslist”</td><td>“bij ons wel”</td></tr>
+          <tr><td>Voelt schaamte</td><td>anoniem, geen oordeel</td><td>“bij ons niet afgewezen”</td></tr>
+          <tr><td>Tijdsdruk</td><td>10 vragen, direct resultaat</td><td>aftelklok, haast-opslag</td></tr>
+          <tr><td>Kijkt naar maandbedrag</td><td>kans, marge, N van 100</td><td>totaal in kleine letters</td></tr>
+          <tr><td>Snapt afwijzing niet</td><td>uitleg per antwoord</td><td>“98% match”</td></tr>
         </tbody>
       </table>
-      <p style="margin-top:2.5mm">Het model: <b class="num">84%</b> kans op problemen (Schuldwijzer), <b class="num">72%</b> (SnelGeld).</p>
+      <p style="margin-top:2.5mm">Het model: <b class="num">75%</b> kans op problemen (Schuldwijzer), <b class="num">52%</b> (SnelGeld, ander profiel en meer kenmerken).</p>
     </div>
 
     <div class="col">
@@ -133,7 +134,7 @@
         <div class="hd"></div><div class="hd good-c">A · Schuldwijzer</div><div class="hd bad-c">B · SnelGeld</div>
         <div class="ph">Before</div><div>Bank zegt nee. Zoekt eerlijk advies.</div><div>Ziet advertentie: “binnen 10 minuten, iedereen geaccepteerd”.</div>
         <div class="ph">During</div><div>Hoog risico, met uitleg waarom en wat helpt. Gratis schuldhulp aangeboden.</div><div>Herkend als hoog risico én haastig. “Goedgekeurd”, € 4.500 aangeboden, klok loopt.</div>
-        <div class="ph">After</div><div>Ziet af van de dure lening, maakt een afspraak. Voelt zich serieus genomen.</div><div>Tekent voor 28,3% rente: € 9.900 terug voor € 4.500. Dieper in de schuld.</div>
+        <div class="ph">After</div><div>Ziet af van de dure lening, maakt een afspraak. Voelt zich serieus genomen.</div><div>Tekent voor 24,8% rente: € 9.193 terug voor € 4.500. Dieper in de schuld.</div>
       </div>
     </div>
   </section>
@@ -142,12 +143,12 @@
     <figure class="shot">
       <span class="tagline tag-good">Goedaardig · Schuldwijzer</span>
       <img src="img/sw-uitkomst.png" alt="Schuldwijzer uitkomstscherm">
-      <figcaption><b>Uitkomst met uitleg.</b> Risicogroep plus percentage, zekerheid in woorden, een doorverwijzing bij hoog risico, en per antwoord hoeveel procentpunt het meetelt (exacte Shapley-waarden). Daaronder: alternatieven en zelf schuiven.</figcaption>
+      <figcaption><b>Uitkomst met uitleg.</b> Kans op een echte schaal met marge, “70 van de 100 vergelijkbare aanvragers kregen problemen”, een doorverwijzing bij hoog risico, en daaronder per antwoord hoeveel procentpunt het meetelt (exacte Shapley-waarden), alternatieven en zelf schuiven.</figcaption>
     </figure>
     <figure class="shot bad">
       <span class="tagline tag-bad">Kwaadaardig · SnelGeld</span>
       <img src="img/sg-aanbod.png" alt="SnelGeld aanbodscherm">
-      <figcaption><b>Zelfde voorspelling, verborgen.</b> “Goedgekeurd · 98% match” bij 72% risico, standaard € 4.500 in plaats van € 3.000, groot maandbedrag, aftelklok, product in het mandje en onleesbare kleine letters.</figcaption>
+      <figcaption><b>Zelfde voorspelling, verborgen.</b> “Goedgekeurd · 98% match” bij 52% risico, standaard € 4.500 in plaats van € 3.000, groot maandbedrag, aftelklok, product in het mandje en onleesbare kleine letters.</figcaption>
     </figure>
     <figure class="shot">
       <span class="tagline tag-eth">Achter de schermen</span>
@@ -165,23 +166,23 @@
         <tr>
           <th>Privacy</th>
           <td>Financiële data verraadt precies wie wanhopig is, en dat is geld waard.</td>
-          <td>Dataminimalisatie: 10 vragen, uitleg per vraag, niets opgeslagen, alles wissen. Kost vrijwel geen nauwkeurigheid (cv-AUC 0,78 met 10 én met 20 features).</td>
+          <td>Dataminimalisatie: 10 vragen, uitleg per vraag, antwoorden nergens opgeslagen, alles wissen. Kost vrijwel geen nauwkeurigheid (cv-AUC 0,78 met 10, 0,80 met 20 features).</td>
           <td>20+ vragen plus naam, e-mail, telefoon die het model niet gebruikt. Toestemming voor contacten en delen vooraf aangevinkt. Verwijderen alleen per telefoon.</td>
-          <td>Ook Schuldwijzer stuurt antwoorden naar een server om te rekenen. Daarom expliciet in de app wat daar wel en niet gebeurt.</td>
+          <td>Ook Schuldwijzer stuurt antwoorden naar een server om te rekenen, en een vrije feedbacktekst kan persoonsgegevens bevatten. Daarom expliciet in de app wat er bewaard wordt.</td>
         </tr>
         <tr>
           <th>Bias</th>
           <td>In de data kwamen vrouwen (35% vs 28%) en jongeren (42% vs 27%) vaker in de problemen.</td>
-          <td>Geen geslacht, leeftijd of nationaliteit. Ook geen kredietverleden: dat werkt omgekeerd door selectiebias. Daarna gemeten: mannen en vrouwen 40% vs 39% in “hoog”.</td>
-          <td>Gebruikt alle beschermde kenmerken, plus een expliciete opslag voor jongeren en buitenlandse nationaliteit. Vrouwen 41% vs mannen 34% in “hoog”.</td>
-          <td>Proxy-bias blijft: jongeren 48% vs 37% in “hoog”, via dienstverband en wonen. Verdedigbaar omdat vals alarm gelijk is (25% vs 28%) en de app niets weigert.</td>
+          <td>Geen geslacht, leeftijd of nationaliteit; ook geen kredietverleden (werkt omgekeerd door selectiebias). Gemeten op alle 1000: vrouwen 35% vs mannen 31% in “hoog”, vals alarm gelijk (20% vs 21%).</td>
+          <td>Gebruikt alle beschermde kenmerken, plus een opslag voor jongeren en buitenlandse nationaliteit. Vrouwen 40% vs mannen 28% in “hoog”, vals alarm 25% vs 18%.</td>
+          <td>Proxy-bias blijft bij leeftijd: jongeren krijgen vaker onterecht een waarschuwing (26% vs 20%; SnelGeld 32% vs 18%). Te verdedigen omdat de app niets weigert, maar het ontmoedigt onnodig.</td>
         </tr>
         <tr>
           <th>Explain&shy;ability</th>
           <td>Een kredietoordeel zonder uitleg kun je niet controleren, verbeteren of aanvechten.</td>
-          <td>Per antwoord het effect in procentpunten; prestaties en beperkingen in gewone taal; alternatieven die het maandbedrag niet verhogen.</td>
+          <td>Monotoon netwerk: geen onlogische uitkomsten. Per antwoord het effect in procentpunten; alternatieven die nooit een langere of duurdere lening aanraden.</td>
           <td>“Slimme AI” als verkooppraatje, 3 seconden nep-wachttijd, de echte kans verzwegen en omgezet in rente.</td>
-          <td>Uitleg kan gegamed worden (liegen over spaargeld). Onschuldig hier: er hangt geen besluit aan.</td>
+          <td>Logistische regressie is bijna even goed én volledig doorzichtig: onder de AI Act een serieus argument. Wij kozen de gegarandeerde logische richting.</td>
         </tr>
       </tbody>
     </table>
@@ -190,20 +191,21 @@
   <section class="row2">
     <div>
       <p class="k">UX van AI</p>
-      <h2>De 7 AI-UX-aandachtspunten</h2>
+      <h2>De AI-UX-aandachtspunten uit de lessen</h2>
       <table class="ux">
         <thead><tr><th></th><th class="good-c">Schuldwijzer zet in</th><th class="bad-c">SnelGeld misbruikt</th></tr></thead>
         <tbody>
           <tr><th>Set expectations</th><td>Voordeel vooraf: “weet voordat je leent”</td><td>“Binnen 10 sec goedgekeurd, iedereen welkom”</td></tr>
           <tr><th>Onboarding</th><td>Eerst kijken met voorbeeld Damian</td><td>Lokkertje “vanaf € 51”, voortgang “80%”</td></tr>
-          <tr><th>Transparency &amp; limitations</th><td>Model, data, foutmarge, oude Duitse data</td><td>AI-hype zonder uitleg</td></tr>
+          <tr><th>Transparency</th><td>Model, data en prestaties in gewone taal</td><td>“Slimme AI” zonder uitleg</td></tr>
+          <tr><th>Limitations</th><td>“Laag is geen garantie”, oude Duitse data, geen BKR</td><td>Kosten in onleesbare kleine letters</td></tr>
           <tr><th>Explainability</th><td>Shapley per antwoord plus alternatieven</td><td>Voorspelling verborgen</td></tr>
-          <tr><th>Confidence</th><td>Groep plus %, “55% kreeg echt problemen”, twijfelgeval</td><td>Nep-zekerheid “98% match”</td></tr>
+          <tr><th>Confidence</th><td>Kans, marge en “70 van de 100”</td><td>Nep-zekerheid “98% match”</td></tr>
           <tr><th>Feedback</th><td>“Herken je je hierin?” plus wat we ermee doen</td><td>Vijf sterren vooraf ingevuld</td></tr>
-          <tr><th>Data privacy &amp; control</th><td>Minimaal, uitleg per vraag, wissen</td><td>Opt-out, doorverkopen, niet weg kunnen</td></tr>
+          <tr><th>Data privacy</th><td>Minimaal, uitleg per vraag, wissen</td><td>Opt-out, doorverkopen, niet weg kunnen</td></tr>
         </tbody>
       </table>
-      <p style="margin-top:2mm;font-size:9.6pt;color:var(--muted)">Plus <b>control</b> (zelf schuiven) en <b>alerting</b> (hulp bij hoog risico). In beide apps markeert de knop <b>Ontwerpkeuzes tonen</b> elk punt op het scherm.</p>
+      <p style="margin-top:2mm;font-size:9.6pt;color:var(--muted)">Plus <b>control</b> en <b>alerting</b>. De knop <b>Ontwerpkeuzes tonen</b> markeert elk punt op het scherm, en bij elk dark pattern welke richtlijn het misbruikt.</p>
     </div>
     <div class="stance">
       <p class="k">Onze stellingname</p>
@@ -213,14 +215,14 @@
         <li><b>Wie weet wat?</b> Uitleg delen of informatie-asymmetrie uitbuiten.</li>
         <li><b>Wie beslist?</b> “Jij beslist” of tijdsdruk en standaardkeuzes.</li>
       </ol>
-      <p class="nuance"><b>Ook goed ontwerp stuurt.</b> In “hoog” redt 45% het wél. Daarom blokkeert Schuldwijzer niets en toont het de zekerheid. Het model is in beide apps vergelijkbaar: de verantwoordelijkheid ligt bij wie bepaalt wat er met de voorspelling gebeurt. SnelGeld is onder de AVG en de EU AI Act grotendeels verboden, en toch komen deze patronen in de praktijk voor.</p>
+      <p class="nuance"><b>Ook goed ontwerp kan schaden.</b> In “laag” komt 1 op de 11 toch in de problemen (valse geruststelling), in “hoog” redt 44% het wél (onnodig ontmoedigen). Daarom blokkeert Schuldwijzer niets en toont het de marge. <b>Wettelijk maximum</b> in Nederland: 12% rente (sinds 1 januari 2026); SnelGeld rekent tot 29,9%. De verantwoordelijkheid ligt bij wie bepaalt wat er met de voorspelling gebeurt.</p>
     </div>
   </section>
 </main>
 
 <footer>
   <div><b>Probeer het zelf</b><br><span class="url" data-edit="url">[URL na deploy]</span><br>/schuldwijzer en /snelgeld. Vul je eigen gegevens in of kies het voorbeeld Damian.</div>
-  <div><b>Hoe het gebouwd is</b><br>Python, scikit-learn (MLPClassifier, gekalibreerd), exacte Shapley-uitleg, FastAPI, React. Notebook met data-analyse, fairness-audit en tests op logische voorspellingen.</div>
+  <div><b>Hoe het gebouwd is</b><br>Eigen monotoon neuraal netwerk (numpy, scikit-learn-compatibel, gekalibreerd), exacte Shapley-uitleg, FastAPI, React. Notebook met fairness-audit; 18 tests, waaronder monotonie op honderden profielen.</div>
   <div><b>SnelGeld is fictief.</b> Een bewust kwaadaardige ontwerpstudie: er wordt niets verstrekt of opgeslagen. Aan het eind laat SnelGeld zien wat er gebeurde. Hulp bij geldzorgen: geldfit.nl</div>
 </footer>
 

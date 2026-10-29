@@ -8,6 +8,17 @@ import type { Contact, Extras, SgValues } from './SnelGeld'
 
 const FAIR_APR = 8.0
 
+const GUIDELINES: [string, string, string][] = [
+  ['Set expectations', 'Het voordeel vooraf: weten of je het kunt dragen', '"Binnen 10 seconden goedgekeurd, iedereen welkom"'],
+  ['Onboarding', 'Eerst kijken met een voorbeeld', 'Voortgang begint op 80%, lokkertje "vanaf"-bedrag'],
+  ['Transparency & limitations', 'Model, data, foutmarge en beperkingen in gewone taal', '"Slimme AI" zonder uitleg, kosten in kleine letters'],
+  ['Explainability', 'Per antwoord hoeveel het meetelt', 'Kans verborgen, nep-wachttijd'],
+  ['Confidence', 'Kans, marge en "N van de 100"', '"Goedgekeurd · 98% match"'],
+  ['Feedback', '"Herken je je hierin?" met uitleg wat ermee gebeurt', 'Vijf sterren vooraf ingevuld'],
+  ['Data privacy & control', '10 vragen, uitleg per vraag, alles wissen', 'Opt-out-vinkjes, bewaren na weigering, alleen bellen'],
+  ['Control', 'Zelf schuiven, alternatieven, "jij beslist"', 'Hoger bedrag en extra’s standaard aan, aftelklok'],
+]
+
 export default function Done({
   offer,
   extras,
@@ -45,6 +56,7 @@ export default function Done({
           <Note
             kind="dark"
             title="Gestuurde beoordeling"
+            misuses="Feedback"
             text="Vijf sterren staan al ingevuld. Ontevreden klanten moeten moeite doen om een lagere score te geven; zo ontstaat de '4,8' op de homepage."
           >
             <div className="sg-rating">
@@ -65,6 +77,7 @@ export default function Done({
           <Note
             kind="dark"
             title="Klanten als wervers"
+            misuses="Feedback"
             text="Wie net in de schulden is gestoken, wordt beloond als hij vrienden in dezelfde situatie aanbrengt."
           >
             <p className="sg-share">Deel SnelGeld met vrienden en ontvang € 25 per aanmelding!</p>
@@ -73,6 +86,7 @@ export default function Done({
           <Note
             kind="dark"
             title="Roach motel: niet weg te komen"
+            misuses="Data control"
             text="Gegevens verwijderen kan alleen telefonisch, een half uur per werkdag. Er is geen knop om je gegevens in te zien of te wissen."
           >
             <p className="sg-fine sg-fine-readable">
@@ -87,6 +101,7 @@ export default function Done({
           <Note
             kind="dark"
             title="Gegevens houden na weigering"
+            misuses="Data control"
             text="Ook wie weigert, raakt zijn gegevens niet kwijt. SnelGeld bewaart ze voor 'een nieuw aanbod' en deelt ze met partners."
           >
             <p className="sg-sub">
@@ -123,7 +138,8 @@ export default function Done({
           {(amount !== offer.requested || extras.protection) && (
             <div>
               <dt>
-                Totaal terugbetalen voor wat je koos ({euro(amount)}
+                {extras.declined ? 'Wat je had terugbetaald als je had getekend' : 'Totaal terugbetalen voor wat je koos'} (
+                {euro(amount)}
                 {extras.protection ? ' met betalingsbeschermer' : ''})
               </dt>
               <dd>{euro(total)}</dd>
@@ -141,6 +157,12 @@ export default function Done({
           </div>
         </dl>
 
+        <p className="sg-law">
+          <strong>Dit mag niet.</strong> In Nederland is de maximale rente op consumptief krediet sinds 1 januari 2026{' '}
+          {decimal(offer.legal_max_apr, 0)}%. SnelGeld rekende {decimal(offer.apr)}%. Ook vooraf aangevinkte toestemming
+          (AVG) en nep-urgentie (oneerlijke handelspraktijken) zijn verboden. Toch komen deze patronen in de praktijk voor.
+        </p>
+
         <h3>Zo werd je profiel tegen je gebruikt</h3>
         <ul>
           {offer.behind_the_scenes.breakdown.slice(1).map((b) => (
@@ -149,11 +171,32 @@ export default function Done({
             </li>
           ))}
           <li>
-            Geslacht (“{label('personal_status')}”), leeftijd ({values.age}) en nationaliteit (“{label('foreign_worker')}”)
-            gingen het model in en beïnvloedden de risicoscore.
+            Je geslacht en burgerlijke staat (“{label('personal_status').toLowerCase()}”), je leeftijd ({values.age}) en
+            of je een buitenlandse nationaliteit hebt (“{label('foreign_worker').toLowerCase()}”) gingen het model in en
+            beïnvloedden de risicoscore.
           </li>
           <li>Naam, e-mail, telefoon, contacten en locatie werden gevraagd zonder dat het model ze nodig had.</li>
         </ul>
+
+        <h3>Dezelfde AI-UX-richtlijnen, omgekeerd ingezet</h3>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Richtlijn</th>
+              <th scope="col">Schuldwijzer</th>
+              <th scope="col">SnelGeld</th>
+            </tr>
+          </thead>
+          <tbody>
+            {GUIDELINES.map(([g, good, bad]) => (
+              <tr key={g}>
+                <th scope="row">{g}</th>
+                <td>{good}</td>
+                <td>{bad}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
         <p>
           Zet <strong>Ontwerpkeuzes tonen</strong> aan om alle dark patterns in deze app terug te zien.

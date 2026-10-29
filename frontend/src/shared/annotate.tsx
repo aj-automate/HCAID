@@ -22,6 +22,7 @@ interface NoteItem {
   kind: NoteKind
   title: string
   text: string
+  misuses?: string
 }
 
 interface Ctx {
@@ -117,6 +118,7 @@ export function NotesProvider({ children, storageKey }: { children: ReactNode; s
                   <span>
                     <span className="notes-kind">{KIND_LABEL[n.kind]}</span>
                     <span className="notes-title">{n.title}</span>
+                    {n.misuses && <span className="notes-misuse">Misbruik van: {n.misuses}</span>}
                     <span className="notes-text">{n.text}</span>
                   </span>
                 </button>
@@ -143,12 +145,15 @@ export function Note({
   kind,
   title,
   text,
+  misuses,
   children,
   inline = false,
 }: {
   kind: NoteKind
   title: string
   text: string
+  /** Bij een dark pattern: welke AI-UX-richtlijn hier wordt misbruikt. */
+  misuses?: string
   children: ReactNode
   inline?: boolean
 }) {
@@ -159,9 +164,9 @@ export function Note({
 
   useEffect(() => {
     if (!register || !unregister) return
-    register({ id, kind, title, text })
+    register({ id, kind, title, text, misuses })
     return () => unregister(id)
-  }, [id, kind, title, text, register, unregister])
+  }, [id, kind, title, text, misuses, register, unregister])
 
   const index = ctx ? ctx.items.findIndex((n) => n.id === id) : -1
   const Tag = inline ? 'span' : 'div'
@@ -171,6 +176,7 @@ export function Note({
         <span className="note-chip" title={text}>
           <span className="notes-num">{index + 1}</span>
           {KIND_LABEL[kind]}: {title}
+          {misuses ? ` (misbruik van ${misuses})` : ''}
         </span>
       )}
       {children}

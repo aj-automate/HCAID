@@ -13,174 +13,249 @@
       "property_magnitude",
       "other_payment_plans"
     ],
+    "model_type": "monotoon neuraal netwerk (1 verborgen laag, tanh), sigmoid-gekalibreerd",
     "best_params": {
-      "alpha": 1.0,
-      "hidden_layer_sizes": [
-        8
-      ]
+      "alpha": 0.01,
+      "hidden": 4
     },
-    "cv_auc": 0.778,
+    "cv_auc": 0.779,
     "test": {
-      "roc_auc": 0.783,
-      "accuracy_05": 0.755,
-      "balanced_accuracy": 0.706,
-      "recall_bad": 0.683,
-      "precision_bad": 0.519,
-      "brier": 0.168,
+      "roc_auc": 0.797,
+      "accuracy_05": 0.765,
+      "balanced_accuracy": 0.726,
+      "recall_bad": 0.667,
+      "precision_bad": 0.571,
+      "brier": 0.161,
       "confusion": [
         [
-          102,
-          38
+          110,
+          30
         ],
         [
-          19,
-          41
+          20,
+          40
         ]
       ]
     },
-    "baselines": {
-      "altijd_good": {
+    "comparison": {
+      "baseline_altijd_good": {
         "roc_auc": 0.5,
-        "accuracy_05": 0.7
+        "accuracy_05": 0.7,
+        "onlogisch_per_kenmerk": {
+          "credit_amount": 0.0,
+          "duration": 0.0,
+          "checking_status": 0.0,
+          "savings_status": 0.0,
+          "employment": 0.0,
+          "installment_commitment": 0.0,
+          "property_magnitude": 0.0,
+          "other_payment_plans": 0.0
+        },
+        "onlogisch_max": 0.0
       },
       "logistische_regressie": {
         "roc_auc": 0.786,
-        "accuracy_05": 0.765
+        "accuracy_05": 0.765,
+        "onlogisch_per_kenmerk": {
+          "credit_amount": 0.0,
+          "duration": 0.0,
+          "checking_status": 0.0,
+          "savings_status": 0.0,
+          "employment": 1.0,
+          "installment_commitment": 0.0,
+          "property_magnitude": 0.0,
+          "other_payment_plans": 0.0
+        },
+        "onlogisch_max": 1.0
+      },
+      "gewoon_neuraal_netwerk": {
+        "roc_auc": 0.783,
+        "accuracy_05": 0.75,
+        "onlogisch_per_kenmerk": {
+          "credit_amount": 0.4,
+          "duration": 0.11,
+          "checking_status": 0.307,
+          "savings_status": 0.193,
+          "employment": 0.99,
+          "installment_commitment": 0.127,
+          "property_magnitude": 0.63,
+          "other_payment_plans": 0.033
+        },
+        "onlogisch_max": 0.99
+      },
+      "monotoon_neuraal_netwerk": {
+        "roc_auc": 0.797,
+        "accuracy_05": 0.765,
+        "onlogisch_per_kenmerk": {
+          "credit_amount": 0.0,
+          "duration": 0.0,
+          "checking_status": 0.0,
+          "savings_status": 0.0,
+          "employment": 0.0,
+          "installment_commitment": 0.0,
+          "property_magnitude": 0.0,
+          "other_payment_plans": 0.0
+        },
+        "onlogisch_max": 0.0
       }
     },
-    "fairness_test": {
+    "oof_all": {
+      "roc_auc": 0.775,
+      "accuracy_05": 0.74,
+      "balanced_accuracy": 0.697,
+      "recall_bad": 0.6,
+      "precision_bad": 0.556,
+      "brier": 0.168,
+      "confusion": [
+        [
+          556,
+          144
+        ],
+        [
+          120,
+          180
+        ]
+      ]
+    },
+    "fairness": {
       "geslacht": {
         "man": {
-          "n": 139,
-          "werkelijk_bad": 0.288,
-          "gemiddelde_kans": 0.31,
-          "geflagd": 0.396,
-          "fpr": 0.283,
-          "fnr": 0.325
+          "n": 690,
+          "n_good": 499,
+          "werkelijk_bad": 0.277,
+          "gemiddelde_kans": 0.296,
+          "geflagd": 0.313,
+          "fpr": 0.208,
+          "fnr": 0.414
         },
         "vrouw": {
-          "n": 61,
-          "werkelijk_bad": 0.328,
-          "gemiddelde_kans": 0.334,
-          "geflagd": 0.393,
-          "fpr": 0.244,
-          "fnr": 0.3
+          "n": 310,
+          "n_good": 201,
+          "werkelijk_bad": 0.352,
+          "gemiddelde_kans": 0.31,
+          "geflagd": 0.348,
+          "fpr": 0.199,
+          "fnr": 0.376
         }
       },
       "leeftijd": {
         "25 of jonger": {
-          "n": 44,
-          "werkelijk_bad": 0.455,
-          "gemiddelde_kans": 0.371,
-          "geflagd": 0.477,
-          "fpr": 0.25,
-          "fnr": 0.25
+          "n": 190,
+          "n_good": 110,
+          "werkelijk_bad": 0.421,
+          "gemiddelde_kans": 0.351,
+          "geflagd": 0.4,
+          "fpr": 0.264,
+          "fnr": 0.412
         },
         "ouder dan 25": {
-          "n": 156,
-          "werkelijk_bad": 0.256,
-          "gemiddelde_kans": 0.303,
-          "geflagd": 0.372,
-          "fpr": 0.276,
-          "fnr": 0.35
+          "n": 810,
+          "n_good": 590,
+          "werkelijk_bad": 0.272,
+          "gemiddelde_kans": 0.288,
+          "geflagd": 0.306,
+          "fpr": 0.195,
+          "fnr": 0.395
         }
       },
       "nationaliteit": {
         "buitenlands": {
-          "n": 194,
-          "werkelijk_bad": 0.304,
-          "gemiddelde_kans": 0.319,
-          "geflagd": 0.397,
-          "fpr": 0.274,
-          "fnr": 0.322
+          "n": 963,
+          "n_good": 667,
+          "werkelijk_bad": 0.307,
+          "gemiddelde_kans": 0.301,
+          "geflagd": 0.326,
+          "fpr": 0.205,
+          "fnr": 0.402
         },
         "niet buitenlands": {
-          "n": 6,
-          "werkelijk_bad": 0.167,
-          "gemiddelde_kans": 0.287,
-          "geflagd": 0.333,
-          "fpr": 0.2,
-          "fnr": 0.0
+          "n": 37,
+          "n_good": 33,
+          "werkelijk_bad": 0.108,
+          "gemiddelde_kans": 0.283,
+          "geflagd": 0.27,
+          "fpr": 0.212,
+          "fnr": 0.25
         }
       }
     },
     "importance": [
       {
         "feature": "checking_status",
-        "mean": 0.101,
-        "std": 0.0254
+        "mean": 0.1326,
+        "std": 0.0318
       },
       {
         "feature": "duration",
-        "mean": 0.0418,
-        "std": 0.0157
+        "mean": 0.0294,
+        "std": 0.0078
       },
       {
         "feature": "purpose",
-        "mean": 0.0325,
-        "std": 0.0159
-      },
-      {
-        "feature": "credit_amount",
-        "mean": 0.0247,
-        "std": 0.0098
-      },
-      {
-        "feature": "employment",
-        "mean": 0.0117,
-        "std": 0.0101
+        "mean": 0.0286,
+        "std": 0.0123
       },
       {
         "feature": "installment_commitment",
-        "mean": 0.011,
-        "std": 0.0087
+        "mean": 0.0121,
+        "std": 0.0073
+      },
+      {
+        "feature": "credit_amount",
+        "mean": 0.01,
+        "std": 0.0045
+      },
+      {
+        "feature": "employment",
+        "mean": 0.0094,
+        "std": 0.0061
       },
       {
         "feature": "savings_status",
-        "mean": 0.009,
-        "std": 0.0104
-      },
-      {
-        "feature": "housing",
-        "mean": 0.0052,
-        "std": 0.0097
+        "mean": 0.0041,
+        "std": 0.0102
       },
       {
         "feature": "property_magnitude",
-        "mean": -0.0023,
-        "std": 0.0076
+        "mean": 0.004,
+        "std": 0.0072
       },
       {
         "feature": "other_payment_plans",
-        "mean": -0.0053,
-        "std": 0.0063
+        "mean": 0.0039,
+        "std": 0.0065
+      },
+      {
+        "feature": "housing",
+        "mean": 0.002,
+        "std": 0.0101
       }
     ],
     "thresholds": {
-      "laag_tot": 0.1353,
-      "hoog_vanaf": 0.3589
+      "laag_tot": 0.1508,
+      "hoog_vanaf": 0.3968
     },
     "bands": [
       {
         "band": "laag",
         "van": 0.0,
-        "tot": 0.135,
-        "aandeel": 0.324,
-        "werkelijk_bad": 0.093
+        "tot": 0.1508,
+        "aandeel": 0.343,
+        "werkelijk_bad": 0.087
       },
       {
         "band": "gemiddeld",
-        "van": 0.135,
-        "tot": 0.359,
-        "aandeel": 0.351,
-        "werkelijk_bad": 0.256
+        "van": 0.1508,
+        "tot": 0.3968,
+        "aandeel": 0.333,
+        "werkelijk_bad": 0.27
       },
       {
         "band": "hoog",
-        "van": 0.359,
+        "van": 0.3968,
         "tot": 1.0,
-        "aandeel": 0.325,
-        "werkelijk_bad": 0.554
+        "aandeel": 0.324,
+        "werkelijk_bad": 0.556
       }
     ],
     "base_rate": 0.3,
@@ -211,224 +286,303 @@
       "own_telephone",
       "foreign_worker"
     ],
+    "model_type": "monotoon neuraal netwerk (1 verborgen laag, tanh), sigmoid-gekalibreerd",
     "best_params": {
-      "alpha": 3.0,
-      "hidden_layer_sizes": [
-        8
-      ]
+      "alpha": 0.03,
+      "hidden": 8
     },
-    "cv_auc": 0.785,
+    "cv_auc": 0.782,
     "test": {
-      "roc_auc": 0.817,
-      "accuracy_05": 0.785,
-      "balanced_accuracy": 0.767,
-      "recall_bad": 0.733,
-      "precision_bad": 0.611,
-      "brier": 0.148,
+      "roc_auc": 0.818,
+      "accuracy_05": 0.775,
+      "balanced_accuracy": 0.74,
+      "recall_bad": 0.667,
+      "precision_bad": 0.606,
+      "brier": 0.155,
       "confusion": [
         [
-          112,
-          28
+          114,
+          26
         ],
         [
-          16,
-          44
+          20,
+          40
         ]
       ]
     },
-    "baselines": {
-      "altijd_good": {
+    "comparison": {
+      "baseline_altijd_good": {
         "roc_auc": 0.5,
-        "accuracy_05": 0.7
+        "accuracy_05": 0.7,
+        "onlogisch_per_kenmerk": {
+          "credit_amount": 0.0,
+          "duration": 0.0,
+          "checking_status": 0.0,
+          "savings_status": 0.0,
+          "employment": 0.0,
+          "installment_commitment": 0.0,
+          "property_magnitude": 0.0,
+          "other_payment_plans": 0.0,
+          "existing_credits": 0.0
+        },
+        "onlogisch_max": 0.0
       },
       "logistische_regressie": {
         "roc_auc": 0.806,
-        "accuracy_05": 0.79
+        "accuracy_05": 0.79,
+        "onlogisch_per_kenmerk": {
+          "credit_amount": 0.0,
+          "duration": 0.0,
+          "checking_status": 0.0,
+          "savings_status": 0.0,
+          "employment": 0.99,
+          "installment_commitment": 0.0,
+          "property_magnitude": 0.0,
+          "other_payment_plans": 0.0,
+          "existing_credits": 0.0
+        },
+        "onlogisch_max": 0.99
+      },
+      "gewoon_neuraal_netwerk": {
+        "roc_auc": 0.809,
+        "accuracy_05": 0.75,
+        "onlogisch_per_kenmerk": {
+          "credit_amount": 0.713,
+          "duration": 0.213,
+          "checking_status": 0.273,
+          "savings_status": 0.34,
+          "employment": 0.943,
+          "installment_commitment": 0.24,
+          "property_magnitude": 0.687,
+          "other_payment_plans": 0.267,
+          "existing_credits": 0.373
+        },
+        "onlogisch_max": 0.943
+      },
+      "monotoon_neuraal_netwerk": {
+        "roc_auc": 0.818,
+        "accuracy_05": 0.775,
+        "onlogisch_per_kenmerk": {
+          "credit_amount": 0.0,
+          "duration": 0.0,
+          "checking_status": 0.0,
+          "savings_status": 0.0,
+          "employment": 0.0,
+          "installment_commitment": 0.0,
+          "property_magnitude": 0.0,
+          "other_payment_plans": 0.0,
+          "existing_credits": 0.0
+        },
+        "onlogisch_max": 0.0
       }
     },
-    "fairness_test": {
+    "oof_all": {
+      "roc_auc": 0.788,
+      "accuracy_05": 0.753,
+      "balanced_accuracy": 0.701,
+      "recall_bad": 0.6,
+      "precision_bad": 0.566,
+      "brier": 0.165,
+      "confusion": [
+        [
+          562,
+          138
+        ],
+        [
+          120,
+          180
+        ]
+      ]
+    },
+    "fairness": {
       "geslacht": {
         "man": {
-          "n": 139,
-          "werkelijk_bad": 0.288,
-          "gemiddelde_kans": 0.3,
-          "geflagd": 0.338,
-          "fpr": 0.192,
-          "fnr": 0.3
+          "n": 690,
+          "n_good": 499,
+          "werkelijk_bad": 0.277,
+          "gemiddelde_kans": 0.278,
+          "geflagd": 0.28,
+          "fpr": 0.176,
+          "fnr": 0.45
         },
         "vrouw": {
-          "n": 61,
-          "werkelijk_bad": 0.328,
-          "gemiddelde_kans": 0.358,
-          "geflagd": 0.41,
-          "fpr": 0.22,
-          "fnr": 0.2
+          "n": 310,
+          "n_good": 201,
+          "werkelijk_bad": 0.352,
+          "gemiddelde_kans": 0.351,
+          "geflagd": 0.403,
+          "fpr": 0.249,
+          "fnr": 0.312
         }
       },
       "leeftijd": {
         "25 of jonger": {
-          "n": 44,
-          "werkelijk_bad": 0.455,
-          "gemiddelde_kans": 0.381,
-          "geflagd": 0.455,
-          "fpr": 0.208,
-          "fnr": 0.25
+          "n": 190,
+          "n_good": 110,
+          "werkelijk_bad": 0.421,
+          "gemiddelde_kans": 0.391,
+          "geflagd": 0.468,
+          "fpr": 0.318,
+          "fnr": 0.325
         },
         "ouder dan 25": {
-          "n": 156,
-          "werkelijk_bad": 0.256,
-          "gemiddelde_kans": 0.3,
-          "geflagd": 0.333,
-          "fpr": 0.198,
-          "fnr": 0.275
+          "n": 810,
+          "n_good": 590,
+          "werkelijk_bad": 0.272,
+          "gemiddelde_kans": 0.279,
+          "geflagd": 0.283,
+          "fpr": 0.175,
+          "fnr": 0.427
         }
       },
       "nationaliteit": {
         "buitenlands": {
-          "n": 194,
-          "werkelijk_bad": 0.304,
-          "gemiddelde_kans": 0.32,
-          "geflagd": 0.366,
-          "fpr": 0.207,
-          "fnr": 0.271
+          "n": 963,
+          "n_good": 667,
+          "werkelijk_bad": 0.307,
+          "gemiddelde_kans": 0.304,
+          "geflagd": 0.326,
+          "fpr": 0.204,
+          "fnr": 0.399
         },
         "niet buitenlands": {
-          "n": 6,
-          "werkelijk_bad": 0.167,
-          "gemiddelde_kans": 0.241,
-          "geflagd": 0.167,
-          "fpr": 0.0,
-          "fnr": 0.0
+          "n": 37,
+          "n_good": 33,
+          "werkelijk_bad": 0.108,
+          "gemiddelde_kans": 0.199,
+          "geflagd": 0.108,
+          "fpr": 0.061,
+          "fnr": 0.5
         }
       }
     },
     "importance": [
       {
         "feature": "checking_status",
-        "mean": 0.0877,
-        "std": 0.0246
-      },
-      {
-        "feature": "duration",
-        "mean": 0.0319,
-        "std": 0.0106
-      },
-      {
-        "feature": "credit_amount",
-        "mean": 0.03,
-        "std": 0.008
+        "mean": 0.1255,
+        "std": 0.0337
       },
       {
         "feature": "purpose",
-        "mean": 0.0283,
+        "mean": 0.0285,
         "std": 0.0094
       },
       {
         "feature": "credit_history",
-        "mean": 0.0214,
-        "std": 0.0112
+        "mean": 0.0216,
+        "std": 0.013
       },
       {
-        "feature": "installment_commitment",
-        "mean": 0.017,
-        "std": 0.0082
+        "feature": "duration",
+        "mean": 0.0177,
+        "std": 0.0049
+      },
+      {
+        "feature": "credit_amount",
+        "mean": 0.01,
+        "std": 0.003
       },
       {
         "feature": "other_parties",
-        "mean": 0.0093,
+        "mean": 0.0092,
         "std": 0.0025
       },
       {
-        "feature": "savings_status",
-        "mean": 0.0081,
-        "std": 0.0098
-      },
-      {
-        "feature": "own_telephone",
-        "mean": 0.0054,
-        "std": 0.005
-      },
-      {
-        "feature": "personal_status",
-        "mean": 0.0039,
-        "std": 0.0084
+        "feature": "installment_commitment",
+        "mean": 0.0089,
+        "std": 0.0066
       },
       {
         "feature": "age",
-        "mean": 0.003,
-        "std": 0.0018
-      },
-      {
-        "feature": "foreign_worker",
-        "mean": 0.003,
-        "std": 0.0026
-      },
-      {
-        "feature": "existing_credits",
-        "mean": 0.0028,
-        "std": 0.0028
-      },
-      {
-        "feature": "residence_since",
-        "mean": 0.0019,
-        "std": 0.0013
-      },
-      {
-        "feature": "housing",
-        "mean": 0.0013,
-        "std": 0.007
-      },
-      {
-        "feature": "job",
-        "mean": 0.0006,
-        "std": 0.0016
-      },
-      {
-        "feature": "employment",
-        "mean": -0.0003,
-        "std": 0.0072
+        "mean": 0.0084,
+        "std": 0.0038
       },
       {
         "feature": "property_magnitude",
-        "mean": -0.0005,
-        "std": 0.0063
+        "mean": 0.0059,
+        "std": 0.0064
       },
       {
-        "feature": "num_dependents",
-        "mean": -0.0006,
-        "std": 0.0037
+        "feature": "employment",
+        "mean": 0.0043,
+        "std": 0.0035
+      },
+      {
+        "feature": "foreign_worker",
+        "mean": 0.0042,
+        "std": 0.0034
       },
       {
         "feature": "other_payment_plans",
-        "mean": -0.0026,
-        "std": 0.0047
+        "mean": 0.0041,
+        "std": 0.0056
+      },
+      {
+        "feature": "savings_status",
+        "mean": 0.004,
+        "std": 0.0072
+      },
+      {
+        "feature": "job",
+        "mean": 0.0024,
+        "std": 0.0016
+      },
+      {
+        "feature": "own_telephone",
+        "mean": 0.0018,
+        "std": 0.0037
+      },
+      {
+        "feature": "personal_status",
+        "mean": 0.0017,
+        "std": 0.0089
+      },
+      {
+        "feature": "existing_credits",
+        "mean": 0.0011,
+        "std": 0.0009
+      },
+      {
+        "feature": "num_dependents",
+        "mean": 0.0008,
+        "std": 0.0033
+      },
+      {
+        "feature": "residence_since",
+        "mean": 0.0006,
+        "std": 0.0003
+      },
+      {
+        "feature": "housing",
+        "mean": 0.0,
+        "std": 0.0077
       }
     ],
     "thresholds": {
-      "laag_tot": 0.1312,
-      "hoog_vanaf": 0.3848
+      "laag_tot": 0.1611,
+      "hoog_vanaf": 0.401
     },
     "bands": [
       {
         "band": "laag",
         "van": 0.0,
-        "tot": 0.131,
-        "aandeel": 0.336,
-        "werkelijk_bad": 0.089
+        "tot": 0.1611,
+        "aandeel": 0.339,
+        "werkelijk_bad": 0.088
       },
       {
         "band": "gemiddeld",
-        "van": 0.131,
-        "tot": 0.385,
-        "aandeel": 0.353,
-        "werkelijk_bad": 0.255
+        "van": 0.1611,
+        "tot": 0.401,
+        "aandeel": 0.343,
+        "werkelijk_bad": 0.262
       },
       {
         "band": "hoog",
-        "van": 0.385,
+        "van": 0.401,
         "tot": 1.0,
-        "aandeel": 0.311,
-        "werkelijk_bad": 0.579
+        "aandeel": 0.318,
+        "werkelijk_bad": 0.566
       }
     ],
     "base_rate": 0.3,

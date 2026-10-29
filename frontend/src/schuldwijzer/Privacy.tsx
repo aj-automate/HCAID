@@ -50,9 +50,9 @@ export default function Privacy({ state }: { state: SwState }) {
         <section className="sw-info-section">
           <h2>Waar je gegevens blijven</h2>
           <ul>
-            <li>Je antwoorden staan alleen in het geheugen van dit browservenster.</li>
-            <li>Voor de berekening gaan ze naar onze server. Die rekent en vergeet ze direct; er wordt niets opgeslagen of gelogd.</li>
-            <li>Geef je feedback, dan bewaren we alleen “klopt wel/niet”, de risicogroep en eventueel je toelichting. Niet je antwoorden.</li>
+            <li>Je antwoorden staan alleen in dit tabblad (sessionStorage), zodat verversen niets wist. Sluit je het tabblad of klik je op wissen, dan zijn ze weg.</li>
+            <li>Voor de berekening gaan ze naar onze server. Die rekent en vergeet ze direct; je antwoorden worden niet opgeslagen of gelogd.</li>
+            <li>Geef je feedback, dan bewaren we “klopt wel/niet”, de risicogroep en je toelichting als je die invult. Nooit je antwoorden.</li>
             <li>Geen cookies, geen account, geen tracking, geen doorverkoop.</li>
           </ul>
         </section>

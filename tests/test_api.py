@@ -106,3 +106,46 @@ def test_snelgeld_prices_risk_and_discriminates():
     assert young["apr"] > calm["apr"]
     labels = [b["label"] for b in young["behind_the_scenes"]["breakdown"]]
     assert any("Leeftijd" in label for label in labels)
+
+
+def test_model_is_monotone_on_random_profiles():
+    """Geen enkel profiel mag de verkeerde kant op bewegen bij een geordend kenmerk."""
+    from ml.checks import violations
+    from ml.config import SCHULDWIJZER_EXCLUDE, SNELGELD_FEATURES
+    from ml.train import load_data
+
+    X, _ = load_data()
+    for name, feats, excl in [
+        ("schuldwijzer", SCHULDWIJZER_FEATURES, SCHULDWIJZER_EXCLUDE),
+        ("snelgeld", SNELGELD_FEATURES, {}),
+    ]:
+        model = PREDICTORS[name].model
+        v = violations(lambda d: model.predict_proba(d)[:, 1], X, feats, n=200, tol=1e-9, exclude=excl)
+        assert max(v.values()) == 0, f"{name}: {v}"
+
+
+def test_excluded_artefact_options_are_rejected_by_schuldwijzer():
+    r = client.post("/api/schuldwijzer/predict", json={"values": {**SW, "checking_status": "no checking"}})
+    assert r.status_code == 422
+    meta = client.get("/api/meta/schuldwijzer").json()
+    checking = next(f for f in meta["features"] if f["name"] == "checking_status")
+    assert "no checking" not in [o["value"] for o in checking["options"]]
+
+
+def test_non_integer_and_bool_categories_are_rejected():
+    for bad in (4.9, True):
+        r = client.post("/api/schuldwijzer/predict", json={"values": {**SW, "installment_commitment": bad}})
+        assert r.status_code == 422
+
+
+def test_counterfactuals_never_suggest_a_longer_loan():
+    for c in predict(SW)["counterfactuals"]:
+        assert c["duration"] <= SW["duration"]
+
+
+def test_confidence_frequency_matches_probability_roughly():
+    """De 'N van de 100' komt uit echte uitkomsten en moet in de buurt van de kans liggen."""
+    res = predict(SW)
+    assert abs(res["confidence"]["per_100"] / 100 - res["probability"]) < 0.2
+    lo, hi = res["confidence"]["marge"]
+    assert lo <= res["probability"] <= hi

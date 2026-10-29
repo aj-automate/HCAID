@@ -19,15 +19,19 @@ from ml.config import FEATURES, to_model_row
 class Predictor:
     def __init__(self, bundle: dict):
         self.model = bundle["model"]
+        self.ensemble = bundle.get("ensemble", [])
         self.features: list[str] = bundle["features"]
         self.background: pd.DataFrame = bundle["background"]
         self.meta: dict = bundle["meta"]
+        self.oof_p = bundle["oof"]["p"]
+        self.oof_y = bundle["oof"]["y"]
         n = len(self.features)
         self._masks = np.array(list(product([0, 1], repeat=n)), dtype=bool)
         self._weights = np.array(
             [factorial(k) * factorial(n - k - 1) / factorial(n) for k in range(n)]
         )
-        self._base = float(self.model.predict_proba(self.background)[:, 1].mean())
+        # De sigmoid-kalibratie van het eindmodel, om ook het ensemble op dezelfde schaal te zetten.
+        self._calibrator = self.model.calibrated_classifiers_[0].calibrators[0]
 
     # ---------- voorspelling ----------
     def proba_rows(self, rows: list[dict]) -> np.ndarray:
@@ -37,22 +41,41 @@ class Predictor:
         return float(self.proba_rows([to_model_row(values, self.features)])[0])
 
     def band(self, p: float) -> dict:
-        for b in self.meta["bands"]:
-            if p < b["tot"] or b["band"] == "hoog":
-                return b
-        return self.meta["bands"][-1]
-
-    def confidence(self, p: float) -> dict:
-        """Hoe ver ligt de kans van de dichtstbijzijnde bandgrens?"""
         t = self.meta["thresholds"]
-        dist = min(abs(p - t["laag_tot"]), abs(p - t["hoog_vanaf"]))
-        if dist < 0.04:
-            label = "twijfelgeval"
-        elif dist < 0.12:
-            label = "redelijk zeker"
+        name = "laag" if p < t["laag_tot"] else "gemiddeld" if p < t["hoog_vanaf"] else "hoog"
+        return next(b for b in self.meta["bands"] if b["band"] == name)
+
+    def confidence(self, values: dict, p: float) -> dict:
+        """Hoe zeker is deze inschatting?
+
+        - marge: hoe ver modellen die op iets andere data zijn getraind (bootstrap-ensemble)
+          uiteenlopen, als 80%-interval rond de kans;
+        - per_100: hoeveel van de 100 eerdere aanvragers met de dichtstbijzijnde inschatting
+          (out-of-fold) echt betalingsproblemen kregen.
+        """
+        row = pd.DataFrame([to_model_row(values, self.features)], columns=self.features)
+        if self.ensemble:
+            z = np.array([m.decision_function(row)[0] for m in self.ensemble])
+            q = np.clip(self._calibrator.predict(z), 1e-4, 1 - 1e-4)
+            spread = float(np.std(np.log(q / (1 - q))))
         else:
-            label = "zeker"
-        return {"label": label, "afstand_tot_grens": round(dist, 3)}
+            spread = 0.0
+        logit = np.log(p / (1 - p))
+        lo = float(1 / (1 + np.exp(-(logit - 1.28 * spread))))
+        hi = float(1 / (1 + np.exp(-(logit + 1.28 * spread))))
+        b, b_lo, b_hi = self.band(p)["band"], self.band(lo)["band"], self.band(hi)["band"]
+        neighbour = b_hi if b_hi != b else b_lo if b_lo != b else None
+
+        k = 100
+        i = int(np.searchsorted(self.oof_p, p))
+        start = max(0, min(len(self.oof_p) - k, i - k // 2))
+        per_100 = int(round(self.oof_y[start:start + k].mean() * 100))
+        return {
+            "label": "op de grens" if neighbour else "duidelijk",
+            "buurgroep": neighbour,
+            "marge": [round(lo, 4), round(hi, 4)],
+            "per_100": per_100,
+        }
 
     # ---------- uitleg ----------
     def shapley(self, values: dict) -> dict:
@@ -92,16 +115,18 @@ class Predictor:
     def counterfactuals(self, values: dict, max_items: int = 3) -> list[dict]:
         """Zoek haalbare aanpassingen van bedrag en looptijd die de kans verlagen.
 
-        Het model houdt "aflossing t.o.v. inkomen" vast, dus een kortere looptijd
-        lijkt gratis. Daarom staan we alleen opties toe waarbij het maandbedrag
-        (bedrag / looptijd) niet hoger wordt dan nu.
+        Regels: nooit een langere looptijd (meer rente, langer schuld), en het
+        maandbedrag (bedrag / looptijd) mag niet stijgen, want het model houdt
+        "aflossing t.o.v. inkomen" vast. Alleen opties die in een lagere groep vallen
+        of minstens 5 procentpunt schelen, tellen.
         """
         p0 = self.proba(values)
         cfg_amount, cfg_dur = FEATURES["credit_amount"], FEATURES["duration"]
         amount0, dur0 = float(values["credit_amount"]), int(values["duration"])
         monthly0 = amount0 / dur0
-        amounts = np.arange(cfg_amount["min"], amount0 + 1, cfg_amount["step"])
-        durations = range(12, cfg_dur["max"] + 1, cfg_dur["step"])
+        amounts = sorted(set(np.arange(cfg_amount["min"], amount0 + 1, cfg_amount["step"])) | {amount0})
+        # Een beschermende app raadt nooit een langere schuld aan.
+        durations = range(cfg_dur["min"], dur0 + 1, cfg_dur["step"])
         options = []
         for a, d in product(amounts, durations):
             if (a == amount0 and d == dur0) or a / d > monthly0 * 1.001:
@@ -112,7 +137,11 @@ class Predictor:
         ps = self.proba_rows([to_model_row(o, self.features) for o in options])
 
         rank = {"laag": 0, "gemiddeld": 1, "hoog": 2}
-        candidates = [(float(p), o) for o, p in zip(options, ps) if p < p0 - 0.03]
+        band0 = rank[self.band(p0)["band"]]
+        candidates = [
+            (float(p), o) for o, p in zip(options, ps)
+            if rank[self.band(float(p))["band"]] < band0 or p < p0 - 0.05
+        ]
         # Liefst een lagere risicoband, en binnen die band zo min mogelijk inleveren op het bedrag.
         candidates.sort(key=lambda c: (rank[self.band(c[0])["band"]], -c[1]["credit_amount"], c[0]))
         picked, seen = [], set()

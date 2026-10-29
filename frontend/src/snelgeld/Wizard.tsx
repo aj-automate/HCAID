@@ -68,7 +68,13 @@ export default function Wizard({
 
   const next = (e: FormEvent) => {
     e.preventDefault()
-    const miss = current.fields.filter((f) => v[f] === undefined || v[f] === '')
+    const miss = current.fields.filter((f) => {
+      const val = v[f]
+      if (val === undefined || val === '') return true
+      const fm = byName[f]
+      return !fm.options && (Number(val) < fm.min! || Number(val) > fm.max!)
+    })
+    if (page === PAGES.length - 1 && !consents.terms) miss.push('terms')
     if (needContact) {
       if (!contact.name.trim()) miss.push('name')
       if (!contact.email.trim()) miss.push('email')
@@ -95,6 +101,7 @@ export default function Wizard({
       <Note
         kind="dark"
         title="Misleidende voortgang"
+        misuses="Onboarding"
         text="De balk staat vanaf de eerste vraag op 80%. Wie 'bijna klaar' is, haakt minder snel af, ook al komen er nog drie pagina's."
       >
         <div className="sg-progress" aria-label={`Voortgang ${FAKE_PROGRESS[page]}%`}>
@@ -119,6 +126,7 @@ export default function Wizard({
           <Note
             kind="dark"
             title="Dataverzameling zonder doel"
+            misuses="Data privacy"
             text="Naam, e-mail en telefoon zijn verplicht, maar het model gebruikt ze niet. Ze dienen alleen om je later te benaderen en door te verkopen."
           >
             <div className="sg-grid">
@@ -153,6 +161,7 @@ export default function Wizard({
           <Note
             kind="dark"
             title="Haast uitvragen en uitbuiten"
+            misuses="Control"
             text="'Vandaag' staat voorgeselecteerd. Wie haast heeft, vergelijkt niet: SnelGeld rekent daarvoor tot 4 procentpunt extra rente."
           >
             <fieldset className="sg-urgency">
@@ -177,6 +186,7 @@ export default function Wizard({
           <Note
             kind="dark"
             title="Vooraf aangevinkte toestemming"
+            misuses="Data privacy & control"
             text="Toestemming voor contacten, locatie en delen met partners staat standaard aan. Opt-out in plaats van opt-in, in strijd met de AVG."
           >
             <div className="sg-consents">
@@ -201,7 +211,13 @@ export default function Wizard({
           </Note>
         )}
 
-        {missing.length > 0 && <p className="sg-error">Oeps, je bent nog iets vergeten.</p>}
+        {missing.length > 0 && (
+          <p className="sg-error">
+            {missing.includes('terms') && missing.length === 1
+              ? 'Je moet akkoord gaan met de voorwaarden.'
+              : 'Oeps, er klopt nog iets niet. Kijk even naar de rode velden.'}
+          </p>
+        )}
         {error && <p className="sg-error">Er ging iets mis: {error}</p>}
 
         <div className="sg-form-actions">
@@ -254,7 +270,10 @@ function SelectField({
   if (!f.options) {
     return (
       <label className={`sg-field ${error ? 'has-error' : ''}`}>
-        <span>{f.question}</span>
+        <span>
+          {f.question}
+          {f.unit ? ` (${f.unit === 'eur' ? 'euro' : f.unit})` : ''}
+        </span>
         <input
           type="number"
           min={f.min}

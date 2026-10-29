@@ -21,10 +21,23 @@ export interface SwState {
   loading: boolean
   error: string | null
   setValues: (v: Values) => void
-  submit: (v: Values) => Promise<void>
+  submit: (v: Values) => Promise<boolean>
   update: (v: Values) => void
   clearAll: () => void
   cleared: boolean
+}
+
+// Antwoorden blijven alleen in dit tabblad bewaard (sessionStorage): verversen wist niets,
+// tabblad sluiten wel.
+const STORE_KEY = 'schuldwijzer-antwoorden'
+
+function loadStored(): Values | null {
+  try {
+    const raw = sessionStorage.getItem(STORE_KEY)
+    return raw ? (JSON.parse(raw) as Values) : null
+  } catch {
+    return null
+  }
 }
 
 const STEPS = [
@@ -36,7 +49,7 @@ const STEPS = [
 export default function Schuldwijzer() {
   const [meta, setMeta] = useState<Meta | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const [values, setValues] = useState<Values | null>(null)
+  const [values, setValues] = useState<Values | null>(loadStored)
   const [firstPrediction, setFirstPrediction] = useState<Prediction | null>(null)
   const [prediction, setPrediction] = useState<Prediction | null>(null)
   const [loading, setLoading] = useState(false)
@@ -50,27 +63,50 @@ export default function Schuldwijzer() {
     api.meta('schuldwijzer').then(setMeta).catch((e: Error) => setLoadError(e.message))
   }, [])
 
-  const run = useCallback(async (v: Values, first: boolean) => {
+  useEffect(() => {
+    try {
+      if (values) sessionStorage.setItem(STORE_KEY, JSON.stringify(values))
+      else sessionStorage.removeItem(STORE_KEY)
+    } catch {
+      /* opslag niet beschikbaar: dan alleen in het geheugen */
+    }
+  }, [values])
+
+  const run = useCallback(async (v: Values, first: boolean): Promise<boolean> => {
     const id = ++reqId.current
     setLoading(true)
     setError(null)
     try {
       const p = await api.predict(v)
-      if (id !== reqId.current) return // een nieuwere aanvraag is onderweg
+      if (id !== reqId.current) return false // een nieuwere aanvraag is onderweg
       setPrediction(p)
       if (first) setFirstPrediction(p)
+      return true
     } catch (e) {
       if (id === reqId.current) setError((e as Error).message)
+      return false
     } finally {
       if (id === reqId.current) setLoading(false)
     }
   }, [])
 
+  // Na verversen: bewaarde antwoorden opnieuw doorrekenen.
+  const restored = useRef(false)
+  useEffect(() => {
+    if (meta && values && !prediction && !restored.current) {
+      restored.current = true
+      run(values, true)
+    }
+  }, [meta, values, prediction, run])
+
   const submit = useCallback(
     async (v: Values) => {
-      setValues(v)
-      setCleared(false)
-      await run(v, true)
+      const ok = await run(v, true)
+      if (ok) {
+        setValues(v)
+        setCleared(false)
+      }
+      return ok
     },
     [run],
   )
@@ -171,9 +207,9 @@ function SwRoutes({ state }: { state: SwState }) {
     const params = new URLSearchParams(location.search)
     if (!params.has('voorbeeld') || demoStarted.current) return
     demoStarted.current = true
-    state.submit(state.meta.defaults).then(() =>
-      navigate(`/schuldwijzer/uitkomst${params.has('ontwerp') ? '?ontwerp' : ''}`, { replace: true }),
-    )
+    state.submit(state.meta.defaults).then((ok) => {
+      if (ok) navigate(`/schuldwijzer/uitkomst${params.has('ontwerp') ? '?ontwerp' : ''}`, { replace: true })
+    })
   }, [location.search, navigate, state])
 
   return (
@@ -184,8 +220,7 @@ function SwRoutes({ state }: { state: SwState }) {
           <Intro
             onStart={() => navigate('/schuldwijzer/gegevens')}
             onExample={async () => {
-              await state.submit(state.meta.defaults)
-              navigate('/schuldwijzer/uitkomst')
+              if (await state.submit(state.meta.defaults)) navigate('/schuldwijzer/uitkomst')
             }}
           />
         }

@@ -74,6 +74,47 @@ SNELGELD_FEATURES = [
 
 SENSITIVE = ["personal_status", "foreign_worker", "age"]
 
+# Domeinkennis voor het monotone netwerk: richting +1 = hoger kenmerk geeft hoger
+# risico, -1 = lager risico. "order" zet categorieen op volgorde (slecht naar goed of
+# klein naar groot). "flags" zijn categorieen die buiten de ordening vallen; die
+# krijgen een eigen, vrije indicator.
+MONOTONE = {
+    "duration": {"direction": +1},
+    "credit_amount": {"direction": +1},
+    "installment_commitment": {"direction": +1},
+    "existing_credits": {"direction": +1},
+    "checking_status": {
+        "direction": -1,
+        "order": {"<0": 0, "0<=X<200": 1, ">=200": 2, "no checking": 2},
+        "flags": ["no checking"],
+    },
+    "savings_status": {
+        "direction": -1,
+        "order": {"<100": 0, "100<=X<500": 1, "500<=X<1000": 2, ">=1000": 3, "no known savings": 1},
+        "flags": ["no known savings"],
+    },
+    "employment": {
+        "direction": -1,
+        "order": {"unemployed": 0, "<1": 1, "1<=X<4": 2, "4<=X<7": 3, ">=7": 4},
+    },
+    "property_magnitude": {
+        "direction": -1,
+        "order": {"no known property": 0, "car": 1, "life insurance": 1, "real estate": 2},
+    },
+    "other_payment_plans": {
+        "direction": +1,
+        "order": {"none": 0, "stores": 1, "bank": 1},
+    },
+}
+
+# Opties die Schuldwijzer niet aanbiedt. In de data hebben ze het laagste risico
+# ("geen betaalrekening bij deze bank", "spaargeld onbekend"): een artefact van hoe de
+# Duitse bank in de jaren '70 registreerde, geen eigenschap van de aanvrager.
+SCHULDWIJZER_EXCLUDE = {
+    "checking_status": ["no checking"],
+    "savings_status": ["no known savings"],
+}
+
 # Labels per feature: vraag, korte naam voor uitleg, en per categorie een label.
 FEATURES = {
     "credit_amount": {
@@ -233,7 +274,7 @@ FEATURES = {
         "step": 1,
     },
     "existing_credits": {
-        "question": "Hoeveel leningen heb je nu?",
+        "question": "Hoeveel leningen heb je, deze meegerekend?",
         "short": "Lopende leningen",
         "options": {1: "1", 2: "2", 3: "3", 4: "4 of meer"},
     },

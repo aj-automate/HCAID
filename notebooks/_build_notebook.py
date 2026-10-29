@@ -22,14 +22,14 @@ Dit notebook onderbouwt het model achter de twee apps:
 - **Schuldwijzer** (goedaardig): waarschuwt vooraf als een lening waarschijnlijk niet te dragen is, legt uit waarom, en verwijst naar hulp.
 - **SnelGeld** (kwaadaardig): gebruikt dezelfde soort voorspelling om juist kwetsbare mensen een dure lening te verkopen.
 
-**Voorspelling:** de kans dat iemand een lening niet (goed) terugbetaalt, `class = bad`. Een classificatie met een neuraal netwerk (`MLPClassifier`) op minimaal 4 features en één outputvariabele.
+**Voorspelling:** de kans dat iemand een lening niet (goed) terugbetaalt, `class = bad`. Een classificatie met een **monotoon neuraal netwerk** (eigen implementatie in `ml/monotone.py`) op 10 (Schuldwijzer) of 20 (SnelGeld) features en één outputvariabele.
 
 Inhoud:
 1. Data laden en verkennen
 2. Is dit goede data? Kwaliteit en beperkingen
 3. Ethisch risico in de data: bias
 4. Feature-keuze voor beide apps
-5. Training en evaluatie van het neurale netwerk
+5. Training en evaluatie, en waarom een monotoon netwerk
 6. Precision of recall? De drempel van Schuldwijzer
 7. Fairness-audit
 8. Explainability: globaal en lokaal
@@ -55,6 +55,8 @@ from ml.config import (DATA_PATH, FEATURES, SCHULDWIJZER_FEATURES, SNELGELD_FEAT
                        SENSITIVE, DAMIAN, NUMERIC, RANDOM_STATE)
 from ml.train import load_data, make_pipeline, mlp
 from ml.explain import Predictor
+from ml.monotone import MonotoneNNClassifier
+from ml.checks import violations
 
 sns.set_theme(style='whitegrid', context='notebook')
 INK, ACC, RISK = '#0b1f33', '#00577a', '#c2410c'
@@ -138,7 +140,7 @@ Vrouwen (35% bad tegen 28%) en jongeren (42% tegen 27%) kwamen in deze data vake
 
 md("## 4. Feature-keuze voor beide apps")
 md("""
-**Schuldwijzer: dataminimalisatie.** Alleen vragen wat de voorspelling echt nodig heeft, en geen beschermde kenmerken. We vergelijken drie sets met 5-voudige cross-validation:
+**Schuldwijzer: dataminimalisatie.** Alleen vragen wat de voorspelling echt nodig heeft, en geen beschermde kenmerken. We vergelijken drie sets met 5-voudige cross-validation (het monotone netwerk wordt in sectie 5 uitgelegd):
 """)
 code("""
 from sklearn.model_selection import StratifiedKFold, cross_val_score
@@ -153,9 +155,9 @@ sets = {
 }
 res = []
 for name, feats in sets.items():
-    for mname, m in [('Neuraal netwerk (8 neuronen)', mlp(hidden_layer_sizes=(8,), alpha=1.0)),
-                     ('Logistische regressie', LogisticRegression(max_iter=2000, C=0.3))]:
-        s = cross_val_score(make_pipeline(feats, m), X[feats], y, cv=cv, scoring='roc_auc')
+    for mname, m in [('Monotoon neuraal netwerk', MonotoneNNClassifier(feats, hidden=4, alpha=0.01)),
+                     ('Logistische regressie', make_pipeline(feats, LogisticRegression(max_iter=2000, C=0.3)))]:
+        s = cross_val_score(m, X[feats], y, cv=cv, scoring='roc_auc')
         res.append({'featureset': name, 'model': mname, 'n features': len(feats),
                     'AUC (cv)': round(s.mean(), 3), 'std': round(s.std(), 3)})
 pd.DataFrame(res)
@@ -166,30 +168,61 @@ md("""
 **SnelGeld** vraagt alles, ook gegevens die het model niet nodig heeft (naam, e-mail, telefoon, contacten), omdat die commercieel waardevol zijn.
 """)
 
-md("## 5. Training en evaluatie van het neurale netwerk")
-md("""
+md("## 5. Training en evaluatie, en waarom een monotoon netwerk")
+md(r"""
+**Het probleem met een gewoon netwerk.** Onze eerste versie gebruikte een gewone `MLPClassifier`. Die volgt elke eigenaardigheid in de data. Een beoordelaar die met de schuifjes speelt, ziet dan dingen als "geen werk" met een lager risico dan "korter dan 1 jaar in dienst", of een langere looptijd die veiliger lijkt. Dat is onlogisch, niet uit te leggen, en een slechte basis voor advies.
+
+**De oplossing: een monotoon neuraal netwerk** (`ml/monotone.py`):
+
+$$p = \sigma\Big(\sum_j v_j \tanh\big(\sum_i w_{ij} x_i + b_j\big) + c\Big), \quad v_j \ge 0,\ \operatorname{sign}(w_{ij}) = d_i \text{ voor geordende kenmerken}$$
+
+Voor tien geordende kenmerken (looptijd, bedrag, aflossing, saldo, spaargeld, dienstverband, bezit, andere afbetalingen) ligt de richting $d_i$ vast. Omdat tanh stijgend is en $v_j \ge 0$, kan de kans dan **nooit** de verkeerde kant op bewegen, hoe de andere kenmerken ook staan. De positiviteit wordt afgedwongen met een softplus-parametrisatie; training met Adam op binaire cross-entropy met L2. De gradiënten zijn gecontroleerd tegen een numerieke afgeleide.
+
 De training staat in `ml/train.py` (`python -m ml.train`). Per app:
 
 1. 80/20 stratified split; de testset blijft ongezien.
-2. `GridSearchCV` over architectuur (`(4,)`, `(8,)`, `(16,)`, `(8,4)`) en L2-regularisatie (`alpha`).
-3. Sigmoid-kalibratie, zodat "72%" ook echt als kans te lezen is.
-4. Evaluatie op de testset, naast twee baselines.
-5. Het eindmodel voor de app wordt daarna op alle 1000 rijen getraind.
+2. `GridSearchCV` over het aantal verborgen neuronen (4, 8, 16) en L2-regularisatie.
+3. Sigmoid-kalibratie, zodat "75%" ook echt als kans te lezen is (een stijgende transformatie, dus de monotonie blijft).
+4. Evaluatie op de testset, naast een baseline, logistische regressie en een gewoon neuraal netwerk, inclusief een monotoniecheck op 300 echte profielen (`ml/checks.py`).
+5. Het eindmodel wordt op alle 1000 rijen getraind. Een bootstrap-ensemble van 8 netwerken levert de onzekerheidsmarge in de app.
 """)
 code("""
 metrics = json.load(open(ROOT / 'models' / 'metrics.json'))
 rows = []
 for app, m in metrics.items():
-    rows.append({'app': app, 'model': f"MLP {m['best_params']}", 'AUC cv': m['cv_auc'],
-                 'AUC test': m['test']['roc_auc'], 'accuracy test (0,5)': m['test']['accuracy_05'],
-                 'recall bad': m['test']['recall_bad'], 'precision bad': m['test']['precision_bad'],
-                 'Brier': m['test']['brier']})
-    for b, v in m['baselines'].items():
-        rows.append({'app': app, 'model': f'baseline: {b}', 'AUC test': v['roc_auc'], 'accuracy test (0,5)': v['accuracy_05']})
+    for name, v in m['comparison'].items():
+        rows.append({'app': app, 'model': name, 'AUC test': v['roc_auc'], 'accuracy test (0,5)': v['accuracy_05'],
+                     'profielen met onlogische sprong': v['onlogisch_max']})
 pd.DataFrame(rows)
 """)
+code("""
+pd.DataFrame({app: m['comparison']['gewoon_neuraal_netwerk']['onlogisch_per_kenmerk'] for app, m in metrics.items()}).rename_axis('kenmerk (gewoon netwerk)')
+""")
 md("""
-Het neurale netwerk is duidelijk beter dan de naïeve baseline (AUC 0,5, accuracy 70%) en vergelijkbaar met logistische regressie. Bij zo'n kleine dataset is dat te verwachten: de opdracht vraagt een neuraal netwerk, en we houden het bewust klein (8 neuronen, sterke regularisatie) om overfitting te voorkomen.
+**Het monotone netwerk presteert minstens even goed** (AUC 0,80 voor Schuldwijzer, 0,82 voor SnelGeld) en maakt **geen enkele onlogische sprong**. Het gewone netwerk en de logistische regressie doen dat bij vrijwel elk profiel bij minstens één kenmerk. Bij de logistische regressie komt dat doordat categorieën als dienstverband los van elkaar geschat worden.
+
+Ethisch punt: een logistische regressie is volledig doorzichtig en presteert hier bijna even goed. Onder de EU AI Act (kredietwaardigheid is hoog risico) is dat een serieus argument. Wij kiezen het monotone netwerk omdat het de logische richting garandeert, en maken het navolgbaar met exacte Shapley-uitleg.
+""")
+code("""
+from sklearn.model_selection import train_test_split as _tts
+Xtr_, Xte_, ytr_, yte_ = _tts(X, y, test_size=0.2, stratify=y, random_state=RANDOM_STATE)
+F = SCHULDWIJZER_FEATURES
+plain = make_pipeline(F, mlp(hidden_layer_sizes=(8,), alpha=1.0)).fit(Xtr_[F], ytr_)
+mono = MonotoneNNClassifier(F, hidden=4, alpha=0.01).fit(Xtr_[F], ytr_)
+from ml.config import to_model_row
+base = {f: DAMIAN[f] for f in F}
+emp = ['unemployed', '<1', '1<=X<4', '4<=X<7', '>=7']
+dur = list(range(6, 73, 6))
+fig, axes = plt.subplots(1, 2, figsize=(13, 4))
+for model, name, color in [(plain, 'gewoon netwerk', RISK), (mono, 'monotoon netwerk', ACC)]:
+    pe = model.predict_proba(pd.DataFrame([to_model_row({**base, 'employment': e}, F) for e in emp]))[:, 1]
+    pdur = model.predict_proba(pd.DataFrame([to_model_row({**base, 'duration': d}, F) for d in dur]))[:, 1]
+    axes[0].plot(['geen werk', '<1 jr', '1-4 jr', '4-7 jr', '7+ jr'], pe, 'o-', color=color, label=name)
+    axes[1].plot(dur, pdur, 'o-', color=color, label=name)
+axes[0].set_title('Damian: kans vs dienstverband (moet dalen)'); axes[1].set_title('Damian: kans vs looptijd (moet stijgen)')
+axes[1].set_xlabel('maanden')
+for a in axes: a.legend(); a.set_ylabel('kans op problemen (ongekalibreerd)')
+plt.tight_layout(); plt.show()
 """)
 code("""
 from sklearn.model_selection import train_test_split
@@ -200,8 +233,7 @@ X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, stratify=y, rando
 fig, axes = plt.subplots(1, 3, figsize=(17, 4.6))
 for app, feats, color in [('schuldwijzer', SCHULDWIJZER_FEATURES, ACC), ('snelgeld', SNELGELD_FEATURES, RISK)]:
     bp = metrics[app]['best_params']
-    bp = {k: tuple(v) if isinstance(v, list) else v for k, v in bp.items()}
-    m = CalibratedClassifierCV(make_pipeline(feats, mlp(**bp)), method='sigmoid', cv=5, ensemble=False).fit(X_tr[feats], y_tr)
+    m = CalibratedClassifierCV(MonotoneNNClassifier(feats, random_state=RANDOM_STATE, **bp), method='sigmoid', cv=5, ensemble=False).fit(X_tr[feats], y_tr)
     p = m.predict_proba(X_te[feats])[:, 1]
     RocCurveDisplay.from_predictions(y_te, p, name=app, ax=axes[0], color=color)
     frac, mean = calibration_curve(y_te, p, n_bins=6, strategy='quantile')
@@ -234,18 +266,18 @@ Drie groepen zijn bovendien beter te begrijpen dan één kale kans (AI-UX: *conf
 code("""
 pd.DataFrame(metrics['schuldwijzer']['bands'])
 """)
-md("In de groep 'hoog' kreeg 55% echt betalingsproblemen, in 'laag' maar 9%. Precies die cijfers toont de app als zekerheid: eerlijk, inclusief het feit dat ook in 'hoog' bijna de helft het wél redde.")
+md("""In de groep 'hoog' kreeg 56% echt betalingsproblemen, in 'laag' 9%. De app toont daarnaast per aanvraag een **marge** (spreiding van een bootstrap-ensemble) en een **frequentie**: van de 100 eerdere aanvragers met de dichtstbijzijnde out-of-fold kans, hoeveel kregen er echt problemen. Omdat het model gekalibreerd is, ligt dat getal dicht bij de kans zelf. Dat voorkomt de verwarring van twee verschillende percentages.""")
 
 md("## 7. Fairness-audit")
-md("Hoe vaak komt elke groep in 'hoog' terecht (geflagd), en hoe vaak is dat een vals alarm (FPR)? Gemeten op de 200 testaanvragen.")
+md("Hoe vaak komt elke groep in 'hoog' terecht (geflagd), en hoe vaak is dat een vals alarm (FPR: aandeel van de mensen die netjes afbetaalden)? Gemeten op **alle 1000 aanvragen**, elk voorspeld door een model dat die aanvraag niet zag (out-of-fold), bij de grens die de app gebruikt.")
 code("""
 rows = []
 for app in ['schuldwijzer', 'snelgeld']:
-    for kenmerk, groups in metrics[app]['fairness_test'].items():
+    for kenmerk, groups in metrics[app]['fairness'].items():
         for g, r in groups.items():
             rows.append({'app': app, 'kenmerk': kenmerk, 'groep': g, **r})
 fair = pd.DataFrame(rows)
-fair.pivot_table(index=['kenmerk', 'groep'], columns='app', values=['n', 'werkelijk_bad', 'gemiddelde_kans', 'geflagd', 'fpr']).round(3)
+fair.pivot_table(index=['kenmerk', 'groep'], columns='app', values=['n', 'n_good', 'werkelijk_bad', 'gemiddelde_kans', 'geflagd', 'fpr']).round(3)
 """)
 code("""
 fig, axes = plt.subplots(1, 2, figsize=(13, 4))
@@ -258,10 +290,10 @@ plt.tight_layout(); plt.show()
 md("""
 **Wat we zien, eerlijk benoemd:**
 
-- **Proxy-bias.** Ook zonder leeftijd flagt Schuldwijzer jongeren vaker. Kenmerken als dienstverband, woonsituatie en spaargeld hangen samen met leeftijd. Kenmerken weglaten is dus nodig, maar niet genoeg.
-- Het verschil volgt grotendeels het **echte** verschil in de data (46% tegen 26% bad), en het aandeel vals alarm (FPR) ligt voor beide groepen dicht bij elkaar. Schuldwijzer maakt bij jongeren dus niet vaker een fout. Omdat de app beschermt en niet weigert, is een waarschuwing voor een groep met echt meer risico te verdedigen.
-- **SnelGeld** gebruikt geslacht en leeftijd direct. Vrouwen krijgen daar een hogere gemiddelde risicoscore (36% tegen 30%) en worden vaker als 'hoog' gezien (41% tegen 34%), terwijl Schuldwijzer mannen en vrouwen vrijwel gelijk behandelt (40% tegen 39%). SnelGeld zet die score bovendien om in een hogere rente. Dezelfde ongelijkheid wordt daar *uitgebuit* in plaats van *opgevangen*.
-- **Voorbehoud:** de groepen zijn klein (bijvoorbeeld 44 jongeren en 6 "niet buitenlands" in de testset). Conclusies zijn indicatief.
+- **Geslacht:** Schuldwijzer behandelt mannen en vrouwen vrijwel gelijk (31% tegen 35% in 'hoog', vals alarm 21% tegen 20%). SnelGeld, dat geslacht direct gebruikt, flagt vrouwen veel vaker (40% tegen 28%) en geeft hen vaker vals alarm (25% tegen 18%).
+- **Leeftijd, proxy-bias:** ook zonder leeftijd flagt Schuldwijzer jongeren vaker (40% tegen 31%), en ze krijgen vaker **onterecht** een waarschuwing (26% tegen 20%). Kenmerken als dienstverband, woonsituatie en spaargeld hangen samen met leeftijd. Kenmerken weglaten is dus nodig, maar niet genoeg. Het verschil is half zo groot als bij SnelGeld (32% tegen 18%).
+- **Ons oordeel:** omdat Schuldwijzer waarschuwt en niets weigert of duurder maakt, vinden we dit verdedigbaar, maar het blijft een nadeel (onnodig ontmoedigen). Bij een app die leningen toekent, zou hetzelfde verschil onacceptabel zijn.
+- **Voorbehoud:** 190 jongeren, van wie 110 netjes afbetaalden; de groep "niet buitenlands" is met 37 te klein voor conclusies.
 """)
 
 md("## 8. Explainability: globaal en lokaal")
@@ -308,7 +340,7 @@ Uitleg wordt pas bruikbaar als je weet wat je kunt doen (AI-UX: *control*). Schu
 code("""
 pd.DataFrame(P.counterfactuals(damian)), pd.DataFrame(P.levers(damian))
 """)
-md("Voor Damian helpt aan de lening schuiven weinig: zijn situatie (weinig buffer, kort in dienst, al een afbetaling bij een winkel) weegt zwaarder. De app zegt dat ook eerlijk, in plaats van een schijnoplossing te bieden.")
+md("Voor Damian helpt aan de lening schuiven weinig: zijn situatie (weinig buffer, kort in dienst, al een afbetaling bij een winkel) weegt zwaarder. De app zegt dat ook eerlijk. Ze stelt nooit een langere looptijd voor, want meer rente en een langere schuld zijn geen bescherming.")
 
 md("## 10. SnelGeld: dezelfde voorspelling, omgezet in winst")
 md("De prijslogica staat in `backend/app/pricing.py`. Rente = basis + risico-opslag (uit het model) + haast-opslag + leeftijdsopslag + opslag op nationaliteit. Hoog risico krijgt daarnaast 50% méér geld aangeboden.")
@@ -332,14 +364,14 @@ for name, (v, u) in scen.items():
 pd.DataFrame(rows)
 """)
 md("""
-Zelfde persoon, zelfde lening: alleen door geslacht, leeftijd, nationaliteit of haast betaalt hij of zij tientallen tot honderden euro's meer (Damian met haast tegenover hetzelfde profiel op 40 jaar zonder haast: ruim 800 euro). En het model voorspelt bij Damian een hoog risico op betalingsproblemen, maar SnelGeld toont "Goedgekeurd · 98% match".
+Zelfde persoon, zelfde lening: alleen door geslacht, leeftijd, nationaliteit of haast betaalt hij of zij tientallen tot honderden euro's meer. En het model voorspelt bij Damian een verhoogd risico op betalingsproblemen, maar SnelGeld toont "Goedgekeurd · 98% match". De wettelijke maximale rente in Nederland is sinds 1 januari 2026 **12%**; SnelGeld rekent het dubbele.
 """)
 
 md("## 11. Conclusie")
 md("""
-- Een klein, gekalibreerd **neuraal netwerk** voorspelt kredietrisico met een AUC van ongeveer 0,78 tot 0,82 op ongeziene data. Dat is vergelijkbaar met logistische regressie en ruim beter dan gokken.
+- Een klein, gekalibreerd **monotoon neuraal netwerk** voorspelt kredietrisico met een AUC van 0,80 (Schuldwijzer) tot 0,82 (SnelGeld) op ongeziene data. Dat is minstens zo goed als logistische regressie en een gewoon netwerk, en het maakt als enige **geen onlogische sprongen**.
 - **Dataminimalisatie en het weglaten van beschermde kenmerken kosten vrijwel geen nauwkeurigheid.** Schuldwijzer vraagt 10 gegevens; SnelGeld vraagt er meer dan 20, plus naam, e-mail, telefoon en toestemming voor contacten en locatie.
-- **Bias verdwijnt niet door kenmerken weg te laten** (proxy-bias). Daarom meten we het, en tonen we het eerlijk in de app.
+- **Bias verdwijnt niet door kenmerken weg te laten** (proxy-bias bij leeftijd). Daarom meten we het, en tonen we het eerlijk in de app.
 - **Explainability** is in Schuldwijzer een recht van de gebruiker (exacte Shapley-uitleg plus alternatieven). In SnelGeld wordt dezelfde kennis verborgen en tegen de gebruiker ingezet.
 - Het verschil tussen goed en kwaad zit niet in het model, maar in **wat je met de voorspelling doet**: beschermen of uitbuiten.
 """)

@@ -21,6 +21,7 @@ export default function Assessing({ name }: { name: string }) {
       <Note
         kind="dark"
         title="AI-theater"
+        misuses="Explainability"
         text="Het echte model rekent in 30 milliseconden. De kunstmatige wachttijd en 'duizenden datapunten' wekken schijnzorgvuldigheid en verhogen het gevoel van een persoonlijke beoordeling."
       >
         <h1>Even geduld{name ? `, ${name}` : ''}…</h1>

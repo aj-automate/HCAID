@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Empathy map Damian</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; width: 297mm; height: 210mm; font: 11pt/1.4 "Source Sans 3", sans-serif; color: #0b1f33; background: #fff; overflow: hidden; }
+  .page { padding: 12mm 14mm; height: 100%; display: flex; flex-direction: column; gap: 6mm; }
+  header { display: flex; justify-content: space-between; align-items: end; border-bottom: 1.2mm solid #0b1f33; padding-bottom: 3mm; }
+  h1 { margin: 0; font-size: 26pt; font-weight: 800; }
+  header p { margin: 0; color: #4a5a69; }
+  .map { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; position: relative; border: .5mm solid #c5ced6; }
+  .q { padding: 5mm 6mm; }
+  .q:nth-child(1) { border-right: .5mm solid #c5ced6; border-bottom: .5mm solid #c5ced6; }
+  .q:nth-child(2) { border-bottom: .5mm solid #c5ced6; }
+  .q:nth-child(3) { border-right: .5mm solid #c5ced6; }
+  .q h2 { margin: 0 0 2mm; font-size: 14pt; color: #00577a; text-transform: uppercase; letter-spacing: .05em; }
+  .q ul { margin: 0; padding-left: 5mm; } .q li { margin-bottom: 1.2mm; }
+  .center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 46mm; height: 46mm; border-radius: 50%; background: #0b1f33; color: #fff; display: grid; place-items: center; text-align: center; font-weight: 700; font-size: 13pt; line-height: 1.2; }
+  .center span { display: block; font-weight: 400; font-size: 9.5pt; color: #c9d3dc; margin-top: 1mm; }
+  .bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+  .bottom div { padding: 4mm 5mm; background: #eef2f5; }
+  .bottom h2 { margin: 0 0 1.5mm; font-size: 12pt; }
+  .bottom ul { margin: 0; padding-left: 5mm; }
+  .pain h2 { color: #c2410c; } .gain h2 { color: #2f6f4f; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>Empathy map: Damian, 24</h1>
+    <p>Moment: zijn auto is kapot en de bank wees zijn lening af</p>
+  </header>
+  <div class="map">
+    <div class="q"><h2>Zegt</h2><ul><li>"Ik regel het liever zelf. En het liefst snel."</li><li>"Zonder auto kom ik niet op mijn werk."</li><li>"Het is maar € 3.000, dat betaal ik zo terug."</li></ul></div>
+    <div class="q" style="padding-left:30mm"><h2>Denkt</h2><ul><li>"Als ik hulp vraag, lijk ik iemand die het niet redt."</li><li>"De bank snapt mijn situatie niet."</li><li>"Misschien is dit de enige kans die ik krijg."</li></ul></div>
+    <div class="q"><h2>Doet</h2><ul><li>Zoekt 's avonds op zijn telefoon naar "snel geld lenen".</li><li>Klikt op advertenties die "vandaag nog" beloven.</li><li>Kijkt alleen naar het maandbedrag.</li><li>Betaalt al iets af via "achteraf betalen".</li></ul></div>
+    <div class="q" style="padding-left:30mm"><h2>Voelt</h2><ul><li>Schaamte na de afwijzing.</li><li>Stress en tijdsdruk: elke dag zonder auto kost werk.</li><li>Wantrouwen tegenover instanties, en hoop op een snelle oplossing.</li></ul></div>
+    <div class="center"><div>Damian<span>automonteur, 1 jaar in dienst, huurt, &lt; € 50 spaargeld</span></div></div>
+  </div>
+  <div class="bottom">
+    <div class="pain"><h2>Pijnpunten</h2><ul><li>Weinig buffer, saldo vaak bijna nul.</li><li>Kort in dienst: onzeker over inkomen.</li><li>Niemand legde uit waarom hij werd afgewezen.</li></ul></div>
+    <div class="gain"><h2>Wat hij wint</h2><ul><li>Vervoer, en daarmee zijn baan en zelfstandigheid.</li><li>Weten wat hij kan dragen, zonder betutteld te worden.</li><li>Uitleg in gewone taal en controle over de keuze.</li></ul></div>
+  </div>
+</div>
+</body>
+</html>
