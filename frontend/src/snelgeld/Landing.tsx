@@ -86,6 +86,70 @@ export default function Landing({
         </button>
         <p className="sg-fine">*Indicatief, op basis van 6,9% en 72 maanden. Je persoonlijke tarief kan afwijken.</p>
       </section>
+
+      <section id="hoe-het-werkt" className="sg-section sg-steps" aria-labelledby="steps-h">
+        <Note
+          kind="dark"
+          title="Schijn-transparantie"
+          misuses="Transparency"
+          text="Een 'hoe het werkt' die alleen het gemak verkoopt. Niets over wat het model voorspelt, welke gegevens meetellen, of hoe de rente wordt bepaald. Vergelijk met 'Hoe het werkt' in Schuldwijzer."
+        >
+          <h2 id="steps-h">Zo werkt het</h2>
+          <ol>
+            <li>
+              <span className="sg-step-num">1</span>
+              <strong>Vul je gegevens in</strong>
+              <span>Duurt maar 2 minuten. Geen papierwerk, geen loonstrook nodig.</span>
+            </li>
+            <li>
+              <span className="sg-step-num">2</span>
+              <strong>Onze slimme AI keurt je direct goed</strong>
+              <span>Geen lastige vragen over je verleden. Iedereen verdient een kans.</span>
+            </li>
+            <li>
+              <span className="sg-step-num">3</span>
+              <strong>Vandaag nog geld op je rekening</strong>
+              <span>Kies je bedrag en teken digitaal. Zo simpel is het.</span>
+            </li>
+          </ol>
+          <button type="button" className="sg-cta sg-cta-inline" onClick={onStart}>
+            Start je aanvraag
+          </button>
+        </Note>
+      </section>
+
+      <section id="reviews" className="sg-section sg-reviews" aria-labelledby="reviews-h">
+        <Note
+          kind="dark"
+          title="Selectieve, onverifieerbare reviews"
+          misuses="Confidence"
+          text="Alleen vijf sterren, anoniem, zonder datum of bron. Negatieve ervaringen worden niet getoond. Het gemiddelde van 4,8 komt mede uit de review die aan het eind al op vijf sterren staat ingevuld."
+        >
+          <h2 id="reviews-h">
+            Wat klanten zeggen <span className="sg-stars">★★★★★</span> <span className="sg-reviews-avg">4,8 uit 12.408 reviews</span>
+          </h2>
+          <ul>
+            {REVIEWS.map((r) => (
+              <li key={r.name}>
+                <span className="sg-stars" aria-label="5 van 5 sterren">★★★★★</span>
+                <p>“{r.text}”</p>
+                <span className="sg-review-name">{r.name}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="sg-fine">Een selectie van onze reviews.</p>
+        </Note>
+      </section>
     </div>
   )
 }
+
+// Verzonnen voor de ontwerpstudie (zie de banner en footer).
+const REVIEWS = [
+  { name: 'Kevin, 23', text: 'Binnen een uur had ik het geld. Echt geen gedoe, top!' },
+  { name: 'Sanne, 29', text: 'Bij de bank kreeg ik nul op het rekest, hier werd ik meteen geholpen.' },
+  { name: 'Mo, 34', text: 'Superfijn dat ze niet moeilijk doen over je verleden.' },
+  { name: 'Lisa, 26', text: 'Vriendelijk, snel en het maandbedrag valt reuze mee.' },
+  { name: 'Daan, 41', text: 'Mijn auto was kapot en de volgende dag reed ik weer. Aanrader!' },
+  { name: 'Priya, 22', text: 'Ik had niet verwacht dat ik werd goedgekeurd. Dankjewel SnelGeld!' },
+]

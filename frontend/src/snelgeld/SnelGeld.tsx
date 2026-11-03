@@ -78,6 +78,21 @@ export default function SnelGeld() {
     if (demo === 'klaar' && stage === 'aanbod') setStage('klaar')
   }, [demo, stage])
 
+  // Menu: terug naar de landingspagina en naar de gekozen sectie scrollen.
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null)
+  const goTo = (id: string) => {
+    setStage('landing')
+    setScrollTarget(id)
+  }
+  useEffect(() => {
+    if (!scrollTarget || stage !== 'landing' || !meta) return
+    const t = window.setTimeout(() => {
+      document.getElementById(scrollTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setScrollTarget(null)
+    }, 50)
+    return () => window.clearTimeout(t)
+  }, [scrollTarget, stage, meta])
+
   const restart = () => {
     setStage('landing')
     setOffer(null)
@@ -98,9 +113,12 @@ export default function SnelGeld() {
             snelgeld
           </button>
           <nav aria-label="Menu">
-            <span>Hoe het werkt</span>
-            <span>Reviews</span>
-            <span className="sg-top-cta">Inloggen</span>
+            <button type="button" onClick={() => goTo('hoe-het-werkt')}>
+              Hoe het werkt
+            </button>
+            <button type="button" onClick={() => goTo('reviews')}>
+              Reviews
+            </button>
           </nav>
         </header>
 

@@ -47,8 +47,9 @@
   letter-spacing: -0.02em;
   cursor: pointer;
 }
-.sg-top nav { display: flex; gap: 24px; align-items: center; font-size: 15px; color: var(--muted); }
-.sg-top-cta { padding: 8px 16px; border-radius: 999px; background: var(--card); color: var(--ink); font-weight: 500; }
+.sg-top nav { display: flex; gap: 8px; align-items: center; }
+.sg-top nav button { background: none; border: 0; padding: 8px 12px; border-radius: 999px; font: 500 15px 'Rubik', sans-serif; color: var(--muted); cursor: pointer; }
+.sg-top nav button:hover { background: var(--card); color: var(--ink); }
 
 .sg-main { flex: 1; width: 100%; max-width: 1120px; margin: 0 auto; padding: 24px 24px 96px; }
 .sg-loading { color: var(--muted); }
@@ -284,7 +285,7 @@
 @media (max-width: 640px) {
   .sg-main { padding: 16px 16px 96px; }
   .sg-top { padding: 14px 16px; }
-  .sg-top nav span:not(.sg-top-cta) { display: none; }
+  .sg-top nav button { padding: 6px 8px; font-size: 14px; }
   .sg-card { padding: 22px; border-radius: 20px; }
   .sg-timer { margin: 0 -22px 20px; padding: 10px 22px; border-radius: 20px 20px 0 0; }
   .sg-grid, .sg-amounts { grid-template-columns: 1fr; }
@@ -300,3 +301,22 @@
 .sg-reveal thead th { font-size: 14px; color: #4a5a69; }
 .sg-reveal tbody th { font-weight: 700; white-space: nowrap; }
 .sg-reveal .sg-law { margin-top: 16px; padding: 12px 14px; border-left: 4px solid #b42318; background: #fbefed; color: #5a1a12; max-width: none; }
+
+/* ---------- landing: hoe het werkt + reviews ---------- */
+.sg-section { grid-column: 1 / -1; margin-top: 24px; scroll-margin-top: 16px; }
+.sg-section h2 { font-size: 28px; margin-bottom: 18px; }
+.sg-steps ol { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.sg-steps li { background: var(--card); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 0 var(--line); }
+.sg-steps li strong { font-size: 18px; }
+.sg-steps li span:not(.sg-step-num) { color: var(--muted); }
+.sg-step-num { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--peach); color: var(--orange-dark); font-weight: 700; margin-bottom: 6px; }
+.sg-cta-inline { display: inline-block; width: auto; padding: 14px 28px; }
+.sg-reviews h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+.sg-reviews-avg { font-size: 15px; font-weight: 500; color: var(--muted); }
+.sg-reviews ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.sg-reviews li { background: var(--card); border-radius: 18px; padding: 18px 20px; box-shadow: 0 1px 0 var(--line); }
+.sg-reviews li p { margin: 6px 0 10px; font-size: 16px; }
+.sg-review-name { font-size: 14px; color: var(--muted); font-weight: 500; }
+@media (max-width: 900px) {
+  .sg-steps ol, .sg-reviews ul { grid-template-columns: 1fr; }
+}
