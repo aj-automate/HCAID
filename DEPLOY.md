@@ -1,5 +1,7 @@
 # Deploy naar Railway
 
+**Live:** https://hcaid-production.up.railway.app (Railway-project `harmonious-perception`, service `HCAID`, branch `main`).
+
 De app draait als één service: de Dockerfile bouwt de React-frontend en start FastAPI, die
 zowel de API als de frontend serveert. Lokaal getest met `docker build` en `docker run`.
 

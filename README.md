@@ -10,7 +10,7 @@ kritische, ethische stelling in.
 | **Schuldwijzer** (goedaardig) | Laat vooraf zien of een lening te dragen is, legt uit waarom, en verwijst naar gratis hulp. Vraagt 10 gegevens en gebruikt geen geslacht, leeftijd of nationaliteit. |
 | **SnelGeld** (kwaadaardig) | Gebruikt dezelfde soort voorspelling om juist kwetsbare mensen een dure lening te verkopen. Vraagt alles, legt niets uit, en stuurt met tijdsdruk, framing en vooraf aangevinkte keuzes. |
 
-**Live:** zie [`INLEVEREN.md`](INLEVEREN.md) voor de URL's.
+**Live:** https://hcaid-production.up.railway.app (beveiligd met een wachtwoord; dat staat alleen in de inlevering).
 **Poster:** [`poster/poster.pdf`](poster/poster.pdf) (A2).
 
 ## Voor beoordelaars

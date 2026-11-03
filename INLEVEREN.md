@@ -10,9 +10,9 @@ De site is beveiligd met een wachtwoord: **[WACHTWOORD]**
 
 | App | URL |
 |---|---|
-| Startpagina | [URL na deploy] |
-| Schuldwijzer (goedaardig) | [URL na deploy]/schuldwijzer |
-| SnelGeld (kwaadaardig) | [URL na deploy]/snelgeld |
+| Startpagina | https://hcaid-production.up.railway.app |
+| Schuldwijzer (goedaardig) | https://hcaid-production.up.railway.app/schuldwijzer |
+| SnelGeld (kwaadaardig) | https://hcaid-production.up.railway.app/snelgeld |
 
 Snel testen: `/schuldwijzer?voorbeeld` en `/snelgeld?demo`. Zet rechtsonder
 **Ontwerpkeuzes tonen** aan om alle AI-UX-richtlijnen, ethische keuzes en dark patterns
@@ -20,9 +20,11 @@ gemarkeerd te zien.
 
 ## Inhoud van de inlevering
 
-1. `HCAID-Kredietrisico-broncode.zip`: de volledige broncode (model, API, beide apps,
+1. **Video met onze pitch** (15-20 minuten, beide groepsleden in beeld).
+2. `HCAID-Kredietrisico-broncode.zip`: de volledige broncode (model, API, beide apps,
    notebook, tests, design, poster-bron). Zie `README.md` in de zip.
-2. `HCAID-Kredietrisico-poster.pdf`: de poster (A2).
+3. `HCAID-Kredietrisico-poster.pdf`: de poster (A2).
+4. In het opmerkingenveld: de link naar de live apps en het wachtwoord.
 
 ## Hoe de rubric terug te vinden is
 
