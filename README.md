@@ -16,7 +16,7 @@ kritische, ethische stelling in.
 ## Voor beoordelaars
 
 1. Open de app en kies **Schuldwijzer** of **SnelGeld**. Vul je eigen gegevens in, of gebruik
-   persona Damian ("Eerst kijken met een voorbeeld" of de demoknop in SnelGeld). Elke
+   persona Damian ("Eerst kijken met een voorbeeld" of de knop "Damian" in SnelGeld). Elke
    invoer gaat live naar het neurale netwerk.
 2. Zet rechtsonder **Ontwerpkeuzes tonen** aan. Elke AI-UX-richtlijn, elk ethisch risico en elk
    dark pattern wordt dan op het scherm gemarkeerd en in een lijst uitgelegd.
