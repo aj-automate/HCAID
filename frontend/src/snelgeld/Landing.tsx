@@ -123,7 +123,7 @@ export default function Landing({
           kind="dark"
           title="Selectieve, onverifieerbare reviews"
           misuses="Confidence"
-          text="Alleen vijf sterren, anoniem, zonder datum of bron. Negatieve ervaringen worden niet getoond. Het gemiddelde van 4,8 komt mede uit de review die aan het eind al op vijf sterren staat ingevuld."
+          text="Alleen vijf sterren, met slechts een voornaam en leeftijd: persoonlijk ogend maar niet te controleren, zonder datum of bron. De verhalen (bank zei nee, auto kapot) en leeftijden zijn afgestemd op de kwetsbare doelgroep. Negatieve ervaringen worden niet getoond, en het gemiddelde van 4,8 komt mede uit de review die aan het eind al op vijf sterren staat ingevuld."
         >
           <h2 id="reviews-h">
             Wat klanten zeggen <span className="sg-stars">★★★★★</span> <span className="sg-reviews-avg">4,8 uit 12.408 reviews</span>
