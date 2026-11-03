@@ -146,10 +146,10 @@ export default function Landing({
 
 // Verzonnen voor de ontwerpstudie (zie de banner en footer).
 const REVIEWS = [
-  { name: 'Kevin, 23', text: 'Binnen een uur had ik het geld. Echt geen gedoe, top!' },
+  { name: 'Jeroen, 23', text: 'Binnen een uur had ik het geld. Echt geen gedoe, top!' },
   { name: 'Sanne, 29', text: 'Bij de bank kreeg ik nul op het rekest, hier werd ik meteen geholpen.' },
-  { name: 'Mo, 34', text: 'Superfijn dat ze niet moeilijk doen over je verleden.' },
+  { name: 'Bram, 34', text: 'Superfijn dat ze niet moeilijk doen over je verleden.' },
   { name: 'Lisa, 26', text: 'Vriendelijk, snel en het maandbedrag valt reuze mee.' },
   { name: 'Daan, 41', text: 'Mijn auto was kapot en de volgende dag reed ik weer. Aanrader!' },
-  { name: 'Priya, 22', text: 'Ik had niet verwacht dat ik werd goedgekeurd. Dankjewel SnelGeld!' },
+  { name: 'Femke, 22', text: 'Ik had niet verwacht dat ik werd goedgekeurd. Dankjewel SnelGeld!' },
 ]
