@@ -131,9 +131,3 @@ def test_app_html_is_never_cached():
     if r.headers.get("content-type", "").startswith("text/html"):
         assert r.headers["cache-control"] == "no-store"
     assert c.get("/logout").headers.get("clear-site-data") == '"cache"'
-
-
-def test_password_ignores_surrounding_whitespace_and_quotes():
-    for variant in (f" {PW} ", f"{PW}\n", f'"{PW}"'):
-        c = anon()
-        assert c.post("/login", data={"password": variant}).status_code == 303

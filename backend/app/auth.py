@@ -42,14 +42,9 @@ SECURITY_HEADERS = {
 ON_RAILWAY = bool(os.environ.get("RAILWAY_ENVIRONMENT"))
 
 
-def clean(value: str) -> str:
-    return value.strip().strip("\"'").strip()
-
-
 class Gate:
     def __init__(self) -> None:
-        # Spaties, enters en aanhalingstekens die bij het plakken in een dashboard meekomen negeren.
-        password = clean(os.environ.get("APP_PASSWORD", ""))
+        password = os.environ.get("APP_PASSWORD", "")
         self.disabled = not password and os.environ.get("ALLOW_NO_PASSWORD") == "1" and not ON_RAILWAY
         # Alleen achter de proxy van Railway is het laatste X-Forwarded-For-adres betrouwbaar.
         self.trust_proxy = ON_RAILWAY or os.environ.get("TRUST_PROXY") == "1"
@@ -88,8 +83,7 @@ class Gate:
             self._revoked[sig] = int(exp_s)
 
     def check_password(self, given: str) -> bool:
-        given = clean(given).encode()
-        return hmac.compare_digest(hashlib.sha256(given).digest(), hashlib.sha256(self._password).digest())
+        return hmac.compare_digest(hashlib.sha256(given.encode()).digest(), hashlib.sha256(self._password).digest())
 
     # ---------- afremmen ----------
     def client_ip(self, request: Request) -> str:
