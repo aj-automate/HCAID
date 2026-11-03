@@ -118,7 +118,7 @@ export default function Wizard({
 
         {page === 0 && (
           <button type="button" className="sg-demo" onClick={fillDemo}>
-            Demo voor beoordelaars: vul alles in met persona Damian
+            Damian
           </button>
         )}
 
