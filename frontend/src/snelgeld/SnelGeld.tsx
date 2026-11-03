@@ -93,11 +93,10 @@ export default function SnelGeld() {
     return () => window.clearTimeout(t)
   }, [scrollTarget, stage, meta])
 
+  // Terug naar de start: SnelGeld "onthoudt" je gegevens, dus een nieuwe aanvraag staat al ingevuld.
   const restart = () => {
     setStage('landing')
     setOffer(null)
-    setValues({})
-    setContact({ name: '', email: '', phone: '' })
   }
 
   return (
