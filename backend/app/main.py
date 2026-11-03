@@ -16,11 +16,14 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from backend.app.auth import install as install_password_gate
 from backend.app.pricing import offer
 from ml.config import DAMIAN, FEATURES, MODEL_DIR, ROOT, SCHULDWIJZER_EXCLUDE, SENSITIVE
 from ml.explain import Predictor
 
-app = FastAPI(title="HCAID Kredietrisico", version="1.0")
+# Geen automatische API-documentatie: zonder wachtwoord mag er niets te zien zijn.
+app = FastAPI(title="HCAID Kredietrisico", version="1.0", docs_url=None, redoc_url=None, openapi_url=None)
+app.state.gate = install_password_gate(app)
 
 PREDICTORS = {
     name: Predictor(joblib.load(MODEL_DIR / f"{name}.joblib"))

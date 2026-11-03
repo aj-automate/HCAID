@@ -7,7 +7,8 @@ zowel de API als de frontend serveert. Lokaal getest met `docker build` en `dock
 
 - `Dockerfile`: multi-stage build (Node 22 voor de frontend, Python 3.12 voor de API).
   Luistert op `$PORT`, die Railway zelf zet.
-- `railway.json`: builder `DOCKERFILE`, healthcheck op `/api/health`, herstart bij fouten.
+- `railway.json`: builder `DOCKERFILE`, healthcheck op `/login` (het enige openbare pad), herstart bij fouten.
+- Wachtwoordpoort (`backend/app/auth.py`): alles behalve het loginscherm vraagt om een geldige sessie.
 - `.dockerignore`: houdt notebooks, poster, design en `.venv` buiten de image.
 - De getrainde modellen (`models/*.joblib`) staan in git. Er wordt bij de deploy dus niet
   opnieuw getraind.
@@ -19,12 +20,14 @@ zowel de API als de frontend serveert. Lokaal getest met `docker build` en `dock
 3. **Root Directory** laat je leeg: de `Dockerfile` staat in de root van de repo. Kies bij
    **Settings → Source → Branch** de branch die je wilt deployen (`eindopdracht`, of `main`
    na het mergen).
-4. Railway herkent `railway.json` en bouwt met de Dockerfile. Er zijn geen
-   omgevingsvariabelen nodig.
+4. Railway herkent `railway.json` en bouwt met de Dockerfile. Zet bij **Variables** één
+   variabele: `APP_PASSWORD` met de waarde uit `.secrets/app_password.txt` (lokaal, niet in
+   git). Zonder deze variabele start de server bewust niet.
 5. **Settings → Networking → Generate Domain**. Je krijgt een URL als
    `https://hcaid-kredietrisico-production.up.railway.app`.
 6. Controleer:
-   - `<url>/api/health` geeft `{"status":"ok"}`
+   - `<url>/` en `<url>/api/health` sturen je zonder login naar het loginscherm of geven 401
+   - na inloggen geeft `<url>/api/health` `{"status":"ok"}`
    - `<url>/schuldwijzer?voorbeeld` toont de uitkomst voor Damian
    - `<url>/snelgeld?demo` toont het aanbod
 7. Zet de URL in `poster/poster.html` (het element met `data-edit="url"`) en in

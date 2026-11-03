@@ -68,7 +68,8 @@ export default function Home() {
 
         <p className="home-disclaimer">
           SnelGeld is een fictieve, bewust schadelijke ontwerpstudie. Er worden geen leningen verstrekt en geen
-          gegevens bewaard. Hulp nodig bij geldzorgen? Kijk op <a href="https://www.geldfit.nl">geldfit.nl</a>.
+          gegevens bewaard. Hulp nodig bij geldzorgen? Kijk op <a href="https://www.geldfit.nl">geldfit.nl</a>.{' '}
+          <a href="/logout">Uitloggen</a>
         </p>
       </main>
     </div>

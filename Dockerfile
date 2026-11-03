@@ -20,4 +20,4 @@ COPY backend/ backend/
 COPY --from=frontend /app/frontend/dist frontend/dist
 
 # Railway zet $PORT; lokaal valt het terug op 8000.
-CMD ["sh", "-c", "uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT:-8000} --no-access-log"]
+CMD ["sh", "-c", "uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT:-8000} --no-access-log --no-server-header"]

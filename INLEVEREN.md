@@ -5,6 +5,9 @@
 
 ## Gedeployde apps
 
+De site is beveiligd met een wachtwoord: **[WACHTWOORD]**
+(Het wachtwoord staat alleen in deze inlevering, niet in de broncode.)
+
 | App | URL |
 |---|---|
 | Startpagina | [URL na deploy] |

@@ -5,6 +5,8 @@ Daarom testen we niet alleen of er een getal uitkomt, maar ook of duidelijke
 gevallen de goede kant op vallen.
 """
 
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -12,6 +14,7 @@ from backend.app.main import PREDICTORS, app
 from ml.config import DAMIAN, SCHULDWIJZER_FEATURES
 
 client = TestClient(app)
+client.post("/login", data={"password": os.environ["APP_PASSWORD"]})
 
 SW = {f: DAMIAN[f] for f in SCHULDWIJZER_FEATURES}
 

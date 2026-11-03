@@ -5,6 +5,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     headers: { 'Content-Type': 'application/json' },
     ...init,
   })
+  if (res.status === 401) {
+    // Sessie verlopen of niet ingelogd: terug naar het loginscherm.
+    window.location.href = `/login?reden=verlopen&next=${encodeURIComponent(window.location.pathname + window.location.search)}`
+    throw new Error('Je sessie is verlopen. Log opnieuw in.')
+  }
   if (!res.ok) {
     let detail = `De server gaf een fout (${res.status}).`
     try {

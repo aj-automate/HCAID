@@ -93,11 +93,13 @@ export default function Schuldwijzer() {
   // Na verversen: bewaarde antwoorden opnieuw doorrekenen.
   const restored = useRef(false)
   useEffect(() => {
+    // Niet terugzetten als ?voorbeeld actief is: dan rekent het voorbeeld zelf.
+    if (new URLSearchParams(location.search).has('voorbeeld')) return
     if (meta && values && !prediction && !restored.current) {
       restored.current = true
       run(values, true)
     }
-  }, [meta, values, prediction, run])
+  }, [meta, values, prediction, run, location.search])
 
   const submit = useCallback(
     async (v: Values) => {

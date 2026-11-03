@@ -12,3 +12,7 @@ feedback/
 *.egg-info/
 .pytest_cache/
 inleveren/
+.secrets/
+.env
+.env.*
+pitch/
